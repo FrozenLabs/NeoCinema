@@ -39,16 +39,16 @@ jobs:
         uses: actions/upload-artifact@v4.3.0
         with:
           name: jar_linux_amd64
-          path: **/build/libs/*linux_amd64*.jar
+          path: fabric/build/libs/*linux_amd64*.jar
 
       - name: Upload Linux ARM64 JAR
         uses: actions/upload-artifact@v4.3.0
         with:
           name: jar_linux_arm64
-          path: **/build/libs/*linux_arm64*.jar
+          path: fabric/build/libs/*linux_arm64*.jar
 
       - name: Upload Windows AMD64 JAR
         uses: actions/upload-artifact@v4.3.0
         with:
           name: jar_windows_amd64
-          path: **/build/libs/*windows_amd64*.jar
+          path: fabric/build/libs/*windows_amd64*.jar
