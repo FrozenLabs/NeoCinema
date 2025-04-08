@@ -1,6 +1,8 @@
 import net.fabricmc.loom.task.RemapJarTask
 import org.apache.tools.ant.taskdefs.condition.Os
 import de.undercouch.gradle.tasks.download.Download
+import org.gradle.kotlin.dsl.java
+import java.net.URL
 
 plugins {
 	java
@@ -70,17 +72,17 @@ idea {
 }
 
 val platforms = listOf("windows_amd64", "linux_amd64", "linux_arm64")
-val cefBranch = "main"
+val cefBranch by properties
 
 tasks.register("downloadJcef") {
 	doLast {
 		platforms.forEach { platform ->
 			try {
-				val manifestUrl = uri("https://ewr1.vultrobjects.com/cinemamod-jcef/$cefBranch/$platform/manifest.txt").toURL()
+				val manifestUrl = URL("https://ewr1.vultrobjects.com/cinemamod-jcef/$cefBranch/$platform/manifest.txt")
 				manifestUrl.readText().lineSequence().forEach { line: String ->
 					val (fileHash, relFilePath) = line.trim().split("  ")
 					val cefResourceUrl = "https://ewr1.vultrobjects.com/cinemamod-jcef/$cefBranch/$platform/$relFilePath"
-					val outputFile = file("${layout.buildDirectory}/cef/$platform/$relFilePath")
+					val outputFile = file("$buildDir/cef/$platform/$relFilePath")
 
 					val downloadTask = tasks.create<Download>("download_${platform}_${relFilePath.hashCode()}") {
 						src(cefResourceUrl)
@@ -112,11 +114,11 @@ fun createPlatformJarTask(platform: String) {
 		dependsOn(tasks.named("jar"), tasks.named("downloadJcef"))
 
 		onlyIf {
-			file("${layout.buildDirectory}/cef/$platform").exists()
+			file("$buildDir/cef/$platform").exists()
 		}
 
 		into("cef") {
-			from("${layout.buildDirectory}/cef/$platform")
+			from("$buildDir/cef/$platform")
 		}
 
 		from(sourceSets["main"].output)

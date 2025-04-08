@@ -1,48 +1,39 @@
-name: Build
+name: Build Platform JARs
 
 on: [push, pull_request]
 
 jobs:
   build:
-    strategy:
-      matrix:
-        java: ["17"]
-        os: [ubuntu-latest, windows-latest] # Windows & Linux
-
-    runs-on: ${{ matrix.os }}
+    runs-on: windows-latest
 
     steps:
       - uses: actions/checkout@v4.1.1
 
       - uses: gradle/wrapper-validation-action@v1.1.0
 
-      - name: Setup Java JDK
+      - name: Setup Java JDK 21
         uses: actions/setup-java@v4.0.0
         with:
           distribution: "temurin"
-          java-version: ${{ matrix.java }}
+          java-version: "21"
 
-      - name: Grant execute permission (Linux only)
-        if: runner.os == 'Linux'
-        run: chmod +x ./gradlew
+      - name: Run platform JAR tasks
+        run: ./gradlew jar_linux_amd64 jar_linux_arm64 jar_windows_amd64
 
-      - name: Build modules
-        run: |
-          ./gradlew :fabric:build
-          if [ "${{ runner.os }}" = "Linux" ]; then
-            ./gradlew :bukkit:build
-          fi
-        shell: bash
-
-      - name: Upload Fabric Artifact
+      - name: Upload Linux AMD64 JAR
         uses: actions/upload-artifact@v4.3.0
         with:
-          name: fabric-${{ runner.os }}
-          path: fabric/build/libs/*.jar
+          name: jar_linux_amd64
+          path: build/libs/*linux_amd64*.jar
 
-      - name: Upload Bukkit Artifact (Linux only)
-        if: runner.os == 'Linux'
+      - name: Upload Linux ARM64 JAR
         uses: actions/upload-artifact@v4.3.0
         with:
-          name: bukkit-linux
-          path: bukkit/build/libs/*.jar
+          name: jar_linux_arm64
+          path: build/libs/*linux_arm64*.jar
+
+      - name: Upload Windows AMD64 JAR
+        uses: actions/upload-artifact@v4.3.0
+        with:
+          name: jar_windows_amd64
+          path: build/libs/*windows_amd64*.jar
