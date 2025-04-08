@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "neocinema:block/preview_screen_block"
+    }
+  }
+}

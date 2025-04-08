@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
-  "id": "cinemamod",
-  "name": "CinemaMod",
+  "id": "neocinema",
+  "name": "NeoCinema",
   "version": "${version}",
   "license": "MIT",
   "entrypoints": {
     "client": [
-      "com.cinemamod.fabric.CinemaModClient"
+      "com.neocinema.fabric.NeoCinemaClient"
     ]
   },
   "contact": {
-    "homepage": "https://github.com/CinemaMod/CinemaMod-Fabric",
-    "sources": "https://github.com/CinemaMod/CinemaMod-Fabric",
-    "issues": "https://github.com/CinemaMod/CinemaMod-Fabric/issues",
+    "homepage": "https://github.com/neocinema/neocinema-Fabric",
+    "sources": "https://github.com/neocinema/neocinema-Fabric",
+    "issues": "https://github.com/neocinema/neocinema-Fabric/issues",
     "discord": "https://discord.gg/rNrh5kW8Ty"
   },
   "mixins": [
-    "cinemamod.mixins.json"
+    "neocinema.mixins.json"
   ],
   "depends": {
     "fabricloader": ">=0.14.21",

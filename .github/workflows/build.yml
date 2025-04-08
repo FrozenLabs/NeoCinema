@@ -1,0 +1,48 @@
+name: Build
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        java: ["17"]
+        os: [ubuntu-latest, windows-latest] # Windows & Linux
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v4.1.1
+
+      - uses: gradle/wrapper-validation-action@v1.1.0
+
+      - name: Setup Java JDK
+        uses: actions/setup-java@v4.0.0
+        with:
+          distribution: "temurin"
+          java-version: ${{ matrix.java }}
+
+      - name: Grant execute permission (Linux only)
+        if: runner.os == 'Linux'
+        run: chmod +x ./gradlew
+
+      - name: Build modules
+        run: |
+          ./gradlew :fabric:build
+          if [ "${{ runner.os }}" = "Linux" ]; then
+            ./gradlew :bukkit:build
+          fi
+        shell: bash
+
+      - name: Upload Fabric Artifact
+        uses: actions/upload-artifact@v4.3.0
+        with:
+          name: fabric-${{ runner.os }}
+          path: fabric/build/libs/*.jar
+
+      - name: Upload Bukkit Artifact (Linux only)
+        if: runner.os == 'Linux'
+        uses: actions/upload-artifact@v4.3.0
+        with:
+          name: bukkit-linux
+          path: bukkit/build/libs/*.jar

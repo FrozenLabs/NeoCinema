@@ -1,0 +1,23 @@
+{
+  "category.neocinema.keybinds": "Neo Cinema",
+
+  "key.neocinema.openvideoqueue": "Open Video Queue",
+  "key.neocinema.openrequestbrowser": "Open Video Request Browser",
+
+  "gui.neocinema.videohistorytitle": "Video History",
+
+  "gui.neocinema.videoqueuetitle": "Video Queue",
+  "gui.neocinema.videoqueueentries": "Video Queue - %d entries",
+  "gui.neocinema.videoqueuenovideos": "No videos queued",
+  "gui.neocinema.videoqueueupnext": "UP NEXT %s",
+
+  "gui.neocinema.videosettingstitle": "Video Settings",
+  "gui.neocinema.videosettingsvolume": "Volume",
+  "gui.neocinema.videosettingsmute": "Mute video while alt-tabbed",
+  "gui.neocinema.videosettingscrosshair": "Hide crosshair while video playing",
+  "gui.neocinema.videosettingsresolution": "Screen resolution: %d%s",
+  "gui.neocinema.videosettingsrefreshrate": "Screen refresh rate: %d %s",
+
+  "gui.neocinema.videorequesttitle": "Video Request Browser",
+  "gui.neocinema.videorequestbtn": "Request"
+}
