@@ -1,4 +1,4 @@
-name: Build Platform JARs
+name: Build All Modules and Platforms
 
 on: [push, pull_request]
 
@@ -7,7 +7,8 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - uses: actions/checkout@v4.1.1
+      - name: Checkout with Submodules
+        uses: actions/checkout@v4.1.1
         with:
           submodules: recursive
 
@@ -19,23 +20,35 @@ jobs:
           distribution: "temurin"
           java-version: "21"
 
-      - name: Run platform JAR tasks
-        run: ./gradlew jar_linux_amd64 jar_linux_arm64 jar_windows_amd64
+      - name: Build Everything
+        run: ./gradlew :bukkit:build :fabric:build jar_linux_amd64 jar_linux_arm64 jar_windows_amd64
+
+      - name: Upload Bukkit JAR
+        uses: actions/upload-artifact@v4.3.0
+        with:
+          name: bukkit
+          path: bukkit/build/libs/*.jar
+
+      - name: Upload Fabric JAR
+        uses: actions/upload-artifact@v4.3.0
+        with:
+          name: fabric
+          path: fabric/build/libs/*.jar
 
       - name: Upload Linux AMD64 JAR
         uses: actions/upload-artifact@v4.3.0
         with:
           name: jar_linux_amd64
-          path: build/libs/*linux_amd64*.jar
+          path: **/build/libs/*linux_amd64*.jar
 
       - name: Upload Linux ARM64 JAR
         uses: actions/upload-artifact@v4.3.0
         with:
           name: jar_linux_arm64
-          path: build/libs/*linux_arm64*.jar
+          path: **/build/libs/*linux_arm64*.jar
 
       - name: Upload Windows AMD64 JAR
         uses: actions/upload-artifact@v4.3.0
         with:
           name: jar_windows_amd64
-          path: build/libs/*windows_amd64*.jar
+          path: **/build/libs/*windows_amd64*.jar
