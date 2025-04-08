@@ -4,7 +4,7 @@ import com.neocinema.bukkit.NeoCinemaPlugin;
 import com.neocinema.bukkit.buffer.PacketByteBufReimpl;
 import com.neocinema.bukkit.event.queue.*;
 import com.neocinema.bukkit.event.queue.*;
-import dev.lunasa.cinema.bukkit.event.queue.*;
+import com.neocinema.bukkit.event.queue.*;
 import com.neocinema.bukkit.video.VideoInfo;
 import com.neocinema.bukkit.theater.PrivateTheater;
 import com.neocinema.bukkit.theater.Theater;

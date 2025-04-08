@@ -3,7 +3,7 @@ package com.neocinema.bukkit.theater;
 import com.neocinema.bukkit.NeoCinemaPlugin;
 import com.neocinema.bukkit.event.*;
 import com.neocinema.bukkit.event.*;
-import dev.lunasa.cinema.bukkit.event.*;
+import com.neocinema.bukkit.event.*;
 import com.neocinema.bukkit.video.VideoInfo;
 import com.neocinema.bukkit.theater.screen.PreviewScreen;
 import com.neocinema.bukkit.theater.screen.Screen;

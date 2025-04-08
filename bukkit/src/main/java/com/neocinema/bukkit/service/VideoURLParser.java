@@ -3,7 +3,7 @@ package com.neocinema.bukkit.service;
 import com.neocinema.bukkit.NeoCinemaPlugin;
 import com.neocinema.bukkit.service.infofetcher.*;
 import com.neocinema.bukkit.service.infofetcher.*;
-import dev.lunasa.cinema.bukkit.service.infofetcher.*;
+import com.neocinema.bukkit.service.infofetcher.*;
 import org.bukkit.entity.Player;
 import java.net.URL;
 import java.io.IOException;

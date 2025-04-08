@@ -3,7 +3,7 @@ package com.neocinema.bukkit.listener;
 import com.neocinema.bukkit.NeoCinemaPlugin;
 import com.neocinema.bukkit.event.*;
 import com.neocinema.bukkit.event.*;
-import dev.lunasa.cinema.bukkit.event.*;
+import com.neocinema.bukkit.event.*;
 import com.neocinema.bukkit.theater.PrivateTheater;
 import com.neocinema.bukkit.theater.StaticTheater;
 import com.neocinema.bukkit.theater.Theater;

@@ -4,7 +4,7 @@ import com.neocinema.bukkit.command.HistoryCommand;
 import com.neocinema.bukkit.command.VolumeCommand;
 import com.neocinema.bukkit.command.theater.*;
 import com.neocinema.bukkit.command.theater.*;
-import dev.lunasa.cinema.bukkit.command.theater.*;
+import com.neocinema.bukkit.command.theater.*;
 import com.neocinema.bukkit.listener.PlayerJoinQuitListener;
 import com.neocinema.bukkit.listener.PlayerTheaterListener;
 import com.neocinema.bukkit.listener.PlayerVideoTimelineListener;
