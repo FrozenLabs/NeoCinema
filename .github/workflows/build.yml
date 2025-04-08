@@ -8,6 +8,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4.1.1
+        with:
+          submodules: recursive
 
       - uses: gradle/wrapper-validation-action@v1.1.0
 
