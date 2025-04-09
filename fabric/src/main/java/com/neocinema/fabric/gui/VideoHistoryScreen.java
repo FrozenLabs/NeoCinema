@@ -23,7 +23,7 @@ import static net.minecraft.client.render.RenderPhase.COLOR_MASK;
 
 public class VideoHistoryScreen extends Screen {
 
-    protected static final Identifier TEXTURE = Identifier.of(NeoCinema.MODID, "textures/gui/menuui_trans.png");
+    protected static final Identifier TEXTURE = Identifier.of(NeoCinema.MODID, "textures/gui/menu-transparent.png");
     protected static final Text SEARCH_TEXT = Text.translatable("gui.socialInteractions.search_hint").formatted(Formatting.ITALIC).formatted(Formatting.GRAY);
 
     private TextFieldWidget searchBox;
@@ -31,7 +31,7 @@ public class VideoHistoryScreen extends Screen {
     private String currentSearch = "";
 
     public VideoHistoryScreen() {
-        super(Text.translatable("gui.neocinema.videohistorytitle"));
+        super(Text.translatable("gui.neocinema.video-history.title"));
     }
 
     @Override
@@ -49,13 +49,9 @@ public class VideoHistoryScreen extends Screen {
         videoListWidget = new VideoHistoryListWidget(videoList, client, this.width, this.height, 88, this.method_31361(), 19);
     }
 
-    private static final Function<Identifier, RenderLayer> GUI_TEXTURED = null;
+    private static final Function<Identifier, RenderLayer> GUI_TEXTURED = Util.memoize((texture) -> RenderLayer.of("gui_textured_overlay", VertexFormats.POSITION_TEXTURE_COLOR, VertexFormat.DrawMode.QUADS, 1536, RenderLayer.MultiPhaseParameters.builder().texture(new Texture(texture, TriState.DEFAULT, false)).program(POSITION_TEXTURE_COLOR_PROGRAM).transparency(TRANSLUCENT_TRANSPARENCY).depthTest(ALWAYS_DEPTH_TEST).writeMaskState(COLOR_MASK).build(false)));
 
     public void renderBackground(DrawContext context) {
-        //Create a Function<Identifier, RenderLayer> GUI_TEXTURED from RenderLayer class
-        Function<Identifier, RenderLayer> GUI_TEXTURED = Util.memoize((texture) -> {
-            return RenderLayer.of("gui_textured_overlay", VertexFormats.POSITION_TEXTURE_COLOR, VertexFormat.DrawMode.QUADS, 1536, RenderLayer.MultiPhaseParameters.builder().texture(new RenderPhase.Texture(texture, TriState.DEFAULT, false)).program(POSITION_TEXTURE_COLOR_PROGRAM).transparency(TRANSLUCENT_TRANSPARENCY).depthTest(ALWAYS_DEPTH_TEST).writeMaskState(COLOR_MASK).build(false));
-        });
         super.applyBlur();
         int i = this.method_31362() + 3;
         context.drawTexture(GUI_TEXTURED, TEXTURE, i,64,1,1,236, 8, 256, 256);
@@ -71,7 +67,7 @@ public class VideoHistoryScreen extends Screen {
         super.render(context, mouseX, mouseY, delta);
         this.renderBackground(context);
         videoListWidget.render(context, mouseX, mouseY, delta);
-        if (!this.searchBox.isFocused() && this.searchBox.getText().isEmpty()) {
+        if (this.client != null && !this.searchBox.isFocused() && this.searchBox.getText().isEmpty()) {
             context.drawTextWithShadow(this.client.textRenderer, SEARCH_TEXT, this.searchBox.getX(), this.searchBox.getY(), -1);
         } else {
             this.searchBox.render(context, mouseX, mouseY, delta);
@@ -113,7 +109,7 @@ public class VideoHistoryScreen extends Screen {
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (!this.searchBox.isFocused() && this.client.options.inventoryKey.matchesKey(keyCode, scanCode)) {
+        if (this.client != null && !this.searchBox.isFocused() && this.client.options.inventoryKey.matchesKey(keyCode, scanCode)) {
             close();
             return true;
         } else {

@@ -2,22 +2,22 @@
   "category.neocinema.keybinds": "Neo Cinema",
 
   "key.neocinema.openvideoqueue": "Open Video Queue",
-  "key.neocinema.openrequestbrowser": "Open Video Request Browser",
+  "key.neocinema.open-request-browser": "Open Video Request Browser",
 
-  "gui.neocinema.videohistorytitle": "Video History",
+  "gui.neocinema.video-history.title": "Video History",
 
   "gui.neocinema.videoqueuetitle": "Video Queue",
   "gui.neocinema.videoqueueentries": "Video Queue - %d entries",
   "gui.neocinema.videoqueuenovideos": "No videos queued",
   "gui.neocinema.videoqueueupnext": "UP NEXT %s",
 
-  "gui.neocinema.videosettingstitle": "Video Settings",
-  "gui.neocinema.videosettingsvolume": "Volume",
-  "gui.neocinema.videosettingsmute": "Mute video while alt-tabbed",
-  "gui.neocinema.videosettingscrosshair": "Hide crosshair while video playing",
-  "gui.neocinema.videosettingsresolution": "Screen resolution: %d%s",
-  "gui.neocinema.videosettingsrefreshrate": "Screen refresh rate: %d %s",
+  "gui.neocinema.video-settings.title": "Video Settings",
+  "gui.neocinema.video-settings.volume": "Volume",
+  "gui.neocinema.video-settings.mute": "Mute video while alt-tabbed",
+  "gui.neocinema.video-settings.cross-hair": "Hide crosshair while video playing",
+  "gui.neocinema.video-settings.resolution": "Screen resolution: %d%s",
+  "gui.neocinema.video-settings.refresh-rate": "Screen refresh rate: %d %s",
 
-  "gui.neocinema.videorequesttitle": "Video Request Browser",
-  "gui.neocinema.videorequestbtn": "Request"
+  "gui.neocinema.video-request.title": "Video Request Browser",
+  "gui.neocinema.video-request.btn": "Request"
 }

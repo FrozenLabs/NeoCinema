@@ -11,7 +11,8 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
 
-public class PreviewScreen{
+@SuppressWarnings("unused")
+public class PreviewScreen {
 
     private int x;
     private int y;

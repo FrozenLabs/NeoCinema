@@ -6,15 +6,20 @@ import com.neocinema.fabric.block.ScreenBlock;
 import com.neocinema.fabric.block.ScreenBlockEntity;
 import com.neocinema.fabric.block.render.PreviewScreenBlockEntityRenderer;
 import com.neocinema.fabric.block.render.ScreenBlockEntityRenderer;
+import com.neocinema.fabric.cef.CefUtil;
+import com.neocinema.fabric.cef.Platform;
 import com.neocinema.fabric.gui.VideoQueueScreen;
 import com.neocinema.fabric.gui.VideoRequestBrowser;
 import com.neocinema.fabric.screen.PreviewScreenManager;
 import com.neocinema.fabric.screen.ScreenManager;
 import com.neocinema.fabric.service.VideoServiceManager;
+import com.neocinema.fabric.settings.VideoSettings;
 import com.neocinema.fabric.util.NetworkUtil;
+import com.neocinema.fabric.util.WindowFocusMuteThread;
 import com.neocinema.fabric.video.list.VideoListManager;
 import com.neocinema.fabric.video.queue.VideoQueue;
 import net.fabricmc.api.ClientModInitializer;
+import net.minecraft.client.MinecraftClient;
 
 import java.io.IOException;
 
@@ -58,23 +63,22 @@ public class NeoCinemaClient implements ClientModInitializer {
     }
 
     private static void initCefMac() {
-        // TODO: fixme
-//        if (Platform.getPlatform().isMacOS()) {
-//            Util.getBootstrapExecutor().execute(() -> {
-//                if (CefUtil.init()) {
-//                    neocinema.LOGGER.info("Chromium Embedded Framework initialized for macOS");
-//                } else {
-//                    neocinema.LOGGER.warning("Could not initialize Chromium Embedded Framework for macOS");
-//                }
-//            });
-//        }
+        if (Platform.getPlatform().isMacOS()) {
+            MinecraftClient.getInstance().execute(() -> {
+                if (CefUtil.init()) {
+                    NeoCinema.LOGGER.info("Chromium Embedded Framework initialized for macOS");
+                } else {
+                    NeoCinema.LOGGER.warn("Could not initialize Chromium Embedded Framework for macOS");
+                }
+            });
+        }
     }
 
     @Override
     public void onInitializeClient() {
         instance = this;
 
-        // Hack for initializing CEF on macos
+        // Hack for initializing CEF on macOS
         initCefMac();
 
         // Register ScreenBlock
@@ -99,8 +103,7 @@ public class NeoCinemaClient implements ClientModInitializer {
         try {
             videoSettings.load();
         } catch (IOException e) {
-            e.printStackTrace();
-            NeoCinema.LOGGER.warning("Could not load video settings.");
+            NeoCinema.LOGGER.error("Could not load video settings!", e);
         }
 
         new WindowFocusMuteThread().start();

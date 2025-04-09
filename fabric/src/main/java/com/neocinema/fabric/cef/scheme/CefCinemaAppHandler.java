@@ -19,7 +19,7 @@ public class CefCinemaAppHandler extends CefAppHandlerAdapter {
     @Override
     public void onRegisterCustomSchemes(CefSchemeRegistrar registrar) {
         if (!registrar.addCustomScheme(VideoServiceResourceHandler.SCHEME, true, false, false, false, true, false, false)) {
-            NeoCinema.LOGGER.warning("Unable to register " + VideoServiceResourceHandler.SCHEME + " scheme");
+            NeoCinema.LOGGER.warn("Unable to register " + VideoServiceResourceHandler.SCHEME + " scheme");
         }
     }
 

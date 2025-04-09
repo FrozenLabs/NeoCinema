@@ -2,6 +2,7 @@ package com.neocinema.fabric.video;
 
 import net.minecraft.network.PacketByteBuf;
 
+@SuppressWarnings("unused")
 public class Video {
 
     private VideoInfo videoInfo;

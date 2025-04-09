@@ -1,10 +1,11 @@
-package com.neocinema.fabric.mixins;
+package com.neocinema.fabric.mixins.cef;
 
 import com.neocinema.fabric.NeoCinema;
 import com.neocinema.fabric.cef.CefUtil;
 import com.neocinema.fabric.cef.Platform;
 import net.minecraft.client.main.Main;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -27,8 +28,8 @@ import java.util.Set;
  * Due to AWT issues on macOS, we cannot initialize CEF here
  */
 @Mixin(Main.class)
-public class CefInitMixin {
-
+public class MixinCefInit {
+    @Unique
     private static void setUnixExecutable(File file) {
         Set<PosixFilePermission> perms = new HashSet<>();
         perms.add(PosixFilePermission.OWNER_READ);
@@ -42,6 +43,7 @@ public class CefInitMixin {
         }
     }
 
+    @Unique
     private static void setupLibraryPath(Platform platform) throws IOException, URISyntaxException {
         // Check for development environment
         // i.e. neocinema-repo/build/cef/<platform>
@@ -54,14 +56,14 @@ public class CefInitMixin {
         // Check for .minecraft/mods/neocinema-libraries directory, create if not exists
         File neocinemaLibrariesDir = new File("mods/neocinema-libraries");
         if (!neocinemaLibrariesDir.exists()) {
-            neocinemaLibrariesDir.mkdirs();
+            if (!neocinemaLibrariesDir.mkdirs()) throw new IOException("Failed to create directory " + neocinemaLibrariesDir.getAbsolutePath());
         }
         System.setProperty("jcef.path", neocinemaLibrariesDir.getCanonicalPath());
 
         //
         // CEF library extraction
         //
-        URL cefManifestURL = CefInitMixin.class.getClassLoader().getResource("cef/manifest.txt");
+        URL cefManifestURL = MixinCefInit.class.getClassLoader().getResource("cef/manifest.txt");
 
         if (cefManifestURL == null) {
             return;
@@ -71,9 +73,9 @@ public class CefInitMixin {
              Scanner scanner = new Scanner(cefManifestInputStream)) {
             while (scanner.hasNext()) {
                 String line = scanner.nextLine();
-                String fileHash = line.split("  ")[0]; // TODO: check hash
-                String relFilePath = line.split("  ")[1];
-                URL cefResourceURL = CefInitMixin.class.getClassLoader().getResource("cef/" + relFilePath);
+                // String fileHash = line.split(" {2}")[0]; // TODO: check hash
+                String relFilePath = line.split(" {2}")[1];
+                URL cefResourceURL = MixinCefInit.class.getClassLoader().getResource("cef/" + relFilePath);
 
                 if (cefResourceURL == null) {
                     continue;
@@ -86,7 +88,9 @@ public class CefInitMixin {
                         continue;
                     }
 
-                    cefResourceFile.getParentFile().mkdirs(); // For when we run across a nested file, i.e. locales/sl.pak
+                    // For when we run across a nested file, i.e. locales/sl.pak
+                    if (!cefResourceFile.getParentFile().mkdirs()) throw new IOException("Failed to create directory " + cefResourceFile.getParentFile().getAbsolutePath());
+
                     Files.copy(cefResourceInputStream, cefResourceFile.toPath());
                     if (platform.isLinux()) {
                         if (cefResourceFile.getName().contains("chrome-sandbox")
@@ -109,7 +113,6 @@ public class CefInitMixin {
             throw new RuntimeException(e);
         }
 
-        // TODO: Move to org.cef.CefApp
         if (platform.isLinux()) {
             System.loadLibrary("jawt");
         }
@@ -118,7 +121,7 @@ public class CefInitMixin {
             if (CefUtil.init()) {
                 NeoCinema.LOGGER.info("Chromium Embedded Framework initialized");
             } else {
-                NeoCinema.LOGGER.warning("Could not initialize Chromium Embedded Framework");
+                NeoCinema.LOGGER.warn("Could not initialize Chromium Embedded Framework");
             }
         }
     }

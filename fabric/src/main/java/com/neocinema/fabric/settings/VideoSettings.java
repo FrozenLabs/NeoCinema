@@ -1,5 +1,6 @@
-package com.neocinema.fabric;
+package com.neocinema.fabric.settings;
 
+import com.neocinema.fabric.NeoCinema;
 import net.minecraft.client.MinecraftClient;
 
 import java.io.File;
@@ -10,6 +11,7 @@ import java.nio.file.Path;
 import java.util.Properties;
 import java.util.concurrent.CompletableFuture;
 
+@SuppressWarnings("unused")
 public class VideoSettings {
 
     private static final Path PATH = MinecraftClient.getInstance().runDirectory
@@ -101,7 +103,7 @@ public class VideoSettings {
             try {
                 save();
             } catch (IOException e) {
-                e.printStackTrace();
+                NeoCinema.LOGGER.error("Failed to save video settings", e);
             }
         });
     }
@@ -109,10 +111,10 @@ public class VideoSettings {
     public void save() throws IOException {
         File file = PATH.toFile();
 
-        file.getParentFile().mkdirs();
+        if (!file.getParentFile().mkdirs()) { throw new IOException("Failed to create directory " + file.getParent()); }
 
         if (!file.exists()) {
-            file.createNewFile();
+            if (!file.createNewFile()) { throw new IOException("Failed to create file " + file); }
         }
 
         Properties properties = new Properties();
@@ -147,9 +149,9 @@ public class VideoSettings {
             browserResolution = Integer.parseInt(properties.getProperty("browser-resolution"));
             browserRefreshRate = Integer.parseInt(properties.getProperty("browser-refresh-rate"));
         } catch (Exception e) {
-            file.delete();
+            NeoCinema.LOGGER.warn("Failed to load video settings", e);
+            if (!file.delete()) throw new IOException("Failed to delete file " + file.getAbsolutePath());
             save();
         }
     }
-
 }

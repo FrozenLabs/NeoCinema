@@ -38,7 +38,6 @@ public class VideoQueueWidgetEntry extends ElementListWidget.Entry<VideoQueueWid
     private static final Identifier TRASH_TEXTURE = Identifier.of(NeoCinema.MODID, "textures/gui/trash.png");
     private static final Identifier TRASH_SELECTED_TEXTURE = Identifier.of(NeoCinema.MODID, "textures/gui/trash_selected.png");
 
-    private final VideoQueueScreen parent;
     private final QueuedVideo queuedVideo;
     private final List<Element> children;
     protected MinecraftClient client;
@@ -46,12 +45,9 @@ public class VideoQueueWidgetEntry extends ElementListWidget.Entry<VideoQueueWid
     private boolean upVoteButtonSelected;
     private boolean trashButtonSelected;
 
-    private final Function<Identifier, RenderLayer> GUI_TEXTURED = Util.memoize((texture) -> {
-        return RenderLayer.of("gui_textured_overlay", VertexFormats.POSITION_TEXTURE_COLOR, VertexFormat.DrawMode.QUADS, 1536, RenderLayer.MultiPhaseParameters.builder().texture(new RenderPhase.Texture(texture, TriState.DEFAULT, false)).program(POSITION_TEXTURE_COLOR_PROGRAM).transparency(TRANSLUCENT_TRANSPARENCY).depthTest(ALWAYS_DEPTH_TEST).writeMaskState(COLOR_MASK).build(false));
-    });
+    private final Function<Identifier, RenderLayer> GUI_TEXTURED = Util.memoize((texture) -> RenderLayer.of("gui_textured_overlay", VertexFormats.POSITION_TEXTURE_COLOR, VertexFormat.DrawMode.QUADS, 1536, RenderLayer.MultiPhaseParameters.builder().texture(new Texture(texture, TriState.DEFAULT, false)).program(POSITION_TEXTURE_COLOR_PROGRAM).transparency(TRANSLUCENT_TRANSPARENCY).depthTest(ALWAYS_DEPTH_TEST).writeMaskState(COLOR_MASK).build(false)));
 
     public VideoQueueWidgetEntry(VideoQueueScreen parent, QueuedVideo queuedVideo, MinecraftClient client) {
-        this.parent = parent;
         this.queuedVideo = queuedVideo;
         children = ImmutableList.of();
         this.client = client;
@@ -67,16 +63,16 @@ public class VideoQueueWidgetEntry extends ElementListWidget.Entry<VideoQueueWid
         int i = x + 4;
         int j = y + (entryHeight - 24) / 2;
         int m = y + (entryHeight - 7) / 2;
-        int color = queuedVideo.isOwner() ? BLACK_COLOR : GRAY_COLOR;
+        int color = queuedVideo.owner() ? BLACK_COLOR : GRAY_COLOR;
         context.fill(x, y, x + entryWidth, y + entryHeight, color);
-        context.drawText(client.textRenderer, queuedVideo.getVideoInfo().getTitleShort(), i, m, WHITE_COLOR, false);
-        context.drawText(client.textRenderer, queuedVideo.getVideoInfo().getDurationString(), i + 118, m, WHITE_COLOR, false);
+        context.drawText(client.textRenderer, queuedVideo.videoInfo().getTitleShort(), i, m, WHITE_COLOR, false);
+        context.drawText(client.textRenderer, queuedVideo.videoInfo().getDurationString(), i + 118, m, WHITE_COLOR, false);
         context.drawText(client.textRenderer, queuedVideo.getScoreString(),  i + 165, m, WHITE_COLOR, false);
         renderDownVoteButton(context, mouseX, mouseY, i, j);
         renderUpVoteButton(context, mouseX, mouseY, i, j);
         renderTrashButton(context, mouseX, mouseY, i, j);
         if (mouseX > i && mouseX < i + 180 && mouseY > j && mouseY < j + 18) {
-            context.drawTooltip(client.textRenderer, Text.of(queuedVideo.getVideoInfo().getTitle()), mouseX, mouseY);
+            context.drawTooltip(client.textRenderer, Text.of(queuedVideo.videoInfo().getTitle()), mouseX, mouseY);
         }
     }
 
@@ -86,7 +82,7 @@ public class VideoQueueWidgetEntry extends ElementListWidget.Entry<VideoQueueWid
 
         downVoteButtonSelected = mouseX > downVoteButtonPosX && mouseX < downVoteButtonPosX + 12 && mouseY > downVoteButtonPosY && mouseY < downVoteButtonPosY + 12;
 
-        if (queuedVideo.getClientState() == -1) {
+        if (queuedVideo.clientState() == -1) {
             context.drawTexture(GUI_TEXTURED,DOWNVOTE_ACTIVE_TEXTURE, downVoteButtonPosX, downVoteButtonPosY, 32F, 32F, 12, 12, 8, 8, 8, 8);
         } else if (downVoteButtonSelected) {
             context.drawTexture(GUI_TEXTURED,DOWNVOTE_SELECTED_TEXTURE, downVoteButtonPosX, downVoteButtonPosY, 32F, 32F, 12, 12,  8, 8, 8, 8);
@@ -101,7 +97,7 @@ public class VideoQueueWidgetEntry extends ElementListWidget.Entry<VideoQueueWid
 
         upVoteButtonSelected = mouseX > upVoteButtonPosX && mouseX < upVoteButtonPosX + 12 && mouseY > upVoteButtonPosY && mouseY < upVoteButtonPosY + 12;
 
-        if (queuedVideo.getClientState() == 1) {
+        if (queuedVideo.clientState() == 1) {
             context.drawTexture(GUI_TEXTURED,UPVOTE_ACTIVE_TEXTURE, upVoteButtonPosX, upVoteButtonPosY, 32F, 32F, 12, 12, 8, 8, 8, 8);
         } else if (upVoteButtonSelected) {
             context.drawTexture(GUI_TEXTURED,UPVOTE_SELECTED_TEXTURE, upVoteButtonPosX, upVoteButtonPosY, 32F, 32F, 12, 12, 8, 8, 8, 8);
@@ -111,7 +107,7 @@ public class VideoQueueWidgetEntry extends ElementListWidget.Entry<VideoQueueWid
     }
 
     private void renderTrashButton(DrawContext context, int mouseX, int mouseY, int i, int j) {
-        if (queuedVideo.isOwner()) {
+        if (queuedVideo.owner()) {
             int trashButtonPosX = i + 225;
             int trashButtonPosY = j + 5;
 
@@ -127,11 +123,11 @@ public class VideoQueueWidgetEntry extends ElementListWidget.Entry<VideoQueueWid
 
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         if (downVoteButtonSelected) {
-            NetworkUtil.sendVideoQueueVotePacket(queuedVideo.getVideoInfo(), -1);
+            NetworkUtil.sendVideoQueueVotePacket(queuedVideo.videoInfo(), -1);
         } else if (upVoteButtonSelected) {
-            NetworkUtil.sendVideoQueueVotePacket(queuedVideo.getVideoInfo(), 1);
+            NetworkUtil.sendVideoQueueVotePacket(queuedVideo.videoInfo(), 1);
         } else if (trashButtonSelected) {
-            NetworkUtil.sendVideoQueueRemovePacket(queuedVideo.getVideoInfo());
+            NetworkUtil.sendVideoQueueRemovePacket(queuedVideo.videoInfo());
         }
 
         return true;

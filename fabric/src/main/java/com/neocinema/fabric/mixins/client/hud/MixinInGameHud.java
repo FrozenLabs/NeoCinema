@@ -1,4 +1,4 @@
-package com.neocinema.fabric.mixins;
+package com.neocinema.fabric.mixins.client.hud;
 
 import com.neocinema.fabric.NeoCinemaClient;
 import net.minecraft.client.gui.DrawContext;
@@ -10,8 +10,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(InGameHud.class)
-public class CrossHairMixin {
-
+public class MixinInGameHud {
     @Inject(method = "renderCrosshair", at = @At("HEAD"), cancellable = true)
     public void renderCrosshair(DrawContext context, RenderTickCounter tickCounter, CallbackInfo ci) {
         if (NeoCinemaClient.getInstance().getScreenManager().hasActiveScreen()
@@ -19,5 +18,4 @@ public class CrossHairMixin {
             ci.cancel();
         }
     }
-
 }

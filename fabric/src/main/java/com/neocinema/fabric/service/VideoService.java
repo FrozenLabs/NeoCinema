@@ -2,6 +2,7 @@ package com.neocinema.fabric.service;
 
 import net.minecraft.network.PacketByteBuf;
 
+@SuppressWarnings("unused")
 public class VideoService {
 
     private String name;

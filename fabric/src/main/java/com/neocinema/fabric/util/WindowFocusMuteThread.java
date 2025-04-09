@@ -1,5 +1,7 @@
-package com.neocinema.fabric;
+package com.neocinema.fabric.util;
 
+import com.neocinema.fabric.NeoCinema;
+import com.neocinema.fabric.NeoCinemaClient;
 import com.neocinema.fabric.screen.Screen;
 import net.minecraft.client.MinecraftClient;
 
@@ -34,7 +36,7 @@ public class WindowFocusMuteThread extends Thread {
             try {
                 Thread.sleep(250);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                NeoCinema.LOGGER.warn("Faced an error in the Focus Mute Thread!", e);
             }
         }
     }

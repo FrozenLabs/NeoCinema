@@ -27,11 +27,10 @@ public class VideoRequestBrowser extends Screen {
     private static CefBrowserCinema browser;
     private static final int browserDrawOffset = 40;
 
-    private ButtonWidget backBtn, fwdBtn, requestBtn, closeBtn;
     private TextFieldWidget urlField;
 
     protected VideoRequestBrowser() {
-        super(Text.translatable("gui.neocinema.videorequesttitle"));
+        super(Text.translatable("gui.neocinema.video-request.title"));
     }
 
     @Override
@@ -44,18 +43,10 @@ public class VideoRequestBrowser extends Screen {
 
         if (browser == null) return;
 
-        ButtonWidget.Builder backBtnBuilder = new Builder(Text.of("<"), button -> {
-            browser.goBack();
-        });
-        ButtonWidget.Builder fwdBtnBuilder = new Builder(Text.of(">"), button -> {
-            browser.goForward();
-        });
-        ButtonWidget.Builder requestBtnBuilder = new Builder(Text.translatable("gui.neocinema.videorequestbtn"), button -> {
-            System.out.println("TODO, request button");
-        });
-        ButtonWidget.Builder closeBtnBuilder = new Builder(Text.of("X"), button -> {
-            close();
-        });
+        ButtonWidget.Builder backBtnBuilder = new Builder(Text.of("<"), button -> browser.goBack());
+        ButtonWidget.Builder fwdBtnBuilder = new Builder(Text.of(">"), button -> browser.goForward());
+        ButtonWidget.Builder requestBtnBuilder = new Builder(Text.translatable("gui.neocinema.video-request.btn"), button -> System.out.println("TODO, request button"));
+        ButtonWidget.Builder closeBtnBuilder = new Builder(Text.of("X"), button -> close());
 
         backBtnBuilder.dimensions(browserDrawOffset, browserDrawOffset - 20, 20, 20);
         fwdBtnBuilder.dimensions(browserDrawOffset + 20, browserDrawOffset - 20, 20, 20);
@@ -67,6 +58,8 @@ public class VideoRequestBrowser extends Screen {
         addDrawableChild(requestBtnBuilder.build());
         addDrawableChild(closeBtnBuilder.build());
 
+        assert client != null;
+        
         urlField = new TextFieldWidget(client.textRenderer, browserDrawOffset + 40, browserDrawOffset - 20 + 1, width - browserDrawOffset - 160, 20, Text.of(""));
         urlField.setMaxLength(65535);
     }
@@ -115,51 +108,39 @@ public class VideoRequestBrowser extends Screen {
     }
 
     private static int remapKeyCode(int keyCode) {
-        switch (keyCode) {
-            case GLFW.GLFW_KEY_BACKSPACE:
-                return KeyEvent.VK_BACK_SPACE;
-            case GLFW.GLFW_KEY_DELETE:
-                return KeyEvent.VK_DELETE;
-            case GLFW.GLFW_KEY_DOWN:
-                return KeyEvent.VK_DOWN;
-            case GLFW.GLFW_KEY_ENTER:
-                return KeyEvent.VK_ENTER;
-            case GLFW.GLFW_KEY_ESCAPE:
-                return KeyEvent.VK_ESCAPE;
-            case GLFW.GLFW_KEY_LEFT:
-                return KeyEvent.VK_LEFT;
-            case GLFW.GLFW_KEY_RIGHT:
-                return KeyEvent.VK_RIGHT;
-            case GLFW.GLFW_KEY_TAB:
-                return KeyEvent.VK_TAB;
-            case GLFW.GLFW_KEY_UP:
-                return KeyEvent.VK_UP;
-            case GLFW.GLFW_KEY_PAGE_UP:
-                return KeyEvent.VK_PAGE_UP;
-            case GLFW.GLFW_KEY_PAGE_DOWN:
-                return KeyEvent.VK_PAGE_DOWN;
-            case GLFW.GLFW_KEY_END:
-                return KeyEvent.VK_END;
-            case GLFW.GLFW_KEY_HOME:
-                return KeyEvent.VK_HOME;
-        }
-        return -1;
+        return switch (keyCode) {
+            case GLFW.GLFW_KEY_BACKSPACE -> KeyEvent.VK_BACK_SPACE;
+            case GLFW.GLFW_KEY_DELETE -> KeyEvent.VK_DELETE;
+            case GLFW.GLFW_KEY_DOWN -> KeyEvent.VK_DOWN;
+            case GLFW.GLFW_KEY_ENTER -> KeyEvent.VK_ENTER;
+            case GLFW.GLFW_KEY_ESCAPE -> KeyEvent.VK_ESCAPE;
+            case GLFW.GLFW_KEY_LEFT -> KeyEvent.VK_LEFT;
+            case GLFW.GLFW_KEY_RIGHT -> KeyEvent.VK_RIGHT;
+            case GLFW.GLFW_KEY_TAB -> KeyEvent.VK_TAB;
+            case GLFW.GLFW_KEY_UP -> KeyEvent.VK_UP;
+            case GLFW.GLFW_KEY_PAGE_UP -> KeyEvent.VK_PAGE_UP;
+            case GLFW.GLFW_KEY_PAGE_DOWN -> KeyEvent.VK_PAGE_DOWN;
+            case GLFW.GLFW_KEY_END -> KeyEvent.VK_END;
+            case GLFW.GLFW_KEY_HOME -> KeyEvent.VK_HOME;
+            default -> -1;
+        };
     }
 
     private static int remapScanCode(int scanCode) {
-        switch (scanCode) {
-            case 327: return 0x47; // HOME
-            case 328: return 0x48; // UP
-            case 329: return 0x49; // PGUP
-            case 331: return 0x4B; // LEFT
-            case 333: return 0x4D; // RIGHT
-            case 335: return 0x4F; // END
-            case 336: return 0x50; // DOWN
-            case 337: return 0x51; // PGDOWN
-            case 338: return 0x52; // PGDOWN
-            case 339: return 0x53; // DEL
-        }
-        return scanCode;
+        return switch (scanCode) {
+            case 327 -> 0x47; // HOME
+            case 328 -> 0x48; // UP
+            case 329 -> 0x49; // PG UP
+            case 331 -> 0x4B; // LEFT
+            case 333 -> 0x4D; // RIGHT
+            case 335 -> 0x4F; // END
+            case 336 -> 0x50; // DOWN
+            case 337 -> 0x51; // PG DOWN
+            case 338 -> 0x52; // PG DOWN
+            case 339 -> 0x53;
+            default -> // DEL
+                    scanCode;
+        };
     }
 
     @Override
@@ -333,7 +314,7 @@ public class VideoRequestBrowser extends Screen {
 
     public static void registerKeyInput() {
         keyBinding = KeyBindingHelper.registerKeyBinding(new KeyBinding(
-                "key.neocinema.openrequestbrowser",
+                "key.neocinema.open-request-browser",
                 InputUtil.Type.KEYSYM,
                 GLFW.GLFW_KEY_G,
                 "category.neocinema.keybinds"

@@ -7,7 +7,7 @@ import java.util.Map;
 
 public class PreviewScreenManager {
 
-    private Map<BlockPos, PreviewScreen> previewScreens;
+    private final Map<BlockPos, PreviewScreen> previewScreens;
 
     public PreviewScreenManager() {
         previewScreens = new HashMap<>();

@@ -29,7 +29,7 @@ import static net.minecraft.client.render.RenderPhase.COLOR_MASK;
 
 public class VideoQueueScreen extends Screen {
 
-    protected static final Identifier TEXTURE = Identifier.of(NeoCinema.MODID, "textures/gui/menuui_trans.png");
+    protected static final Identifier TEXTURE = Identifier.of(NeoCinema.MODID, "textures/gui/menu-transparent.png");
     protected static KeyBinding keyBinding;
 
     public VideoQueueWidget videoQueueWidget;

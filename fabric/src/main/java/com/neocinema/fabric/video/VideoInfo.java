@@ -8,6 +8,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
+@SuppressWarnings("unused")
 public class VideoInfo {
 
     private VideoService videoService;
@@ -85,7 +86,7 @@ public class VideoInfo {
         StringBuilder stringBuilder = new StringBuilder();
         String[] split = formatted.split(":");
 
-        // If does not have hours
+        // If it does not have hours
         if (!split[0].equals("0")) {
             return formatted;
         } else {
@@ -100,10 +101,9 @@ public class VideoInfo {
 
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof VideoInfo)) {
+        if (!(o instanceof VideoInfo videoInfo)) {
             return false;
         }
-        VideoInfo videoInfo = (VideoInfo) o;
         return videoService == videoInfo.videoService && Objects.equals(id, videoInfo.id);
     }
 

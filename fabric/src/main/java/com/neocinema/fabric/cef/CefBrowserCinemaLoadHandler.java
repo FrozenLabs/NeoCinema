@@ -37,7 +37,7 @@ public class CefBrowserCinemaLoadHandler implements CefLoadHandler {
 
     @Override
     public void onLoadError(CefBrowser browser, CefFrame frame, ErrorCode errorCode, String errorText, String failedUrl) {
-        NeoCinema.LOGGER.warning("Load error: " + errorText);
+        NeoCinema.LOGGER.warn("Load error: {}", errorText);
     }
 
 }

@@ -13,6 +13,7 @@ import net.minecraft.util.math.BlockPos;
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings("unused")
 public class Screen {
 
     private int x;
@@ -24,7 +25,7 @@ public class Screen {
     private boolean visible;
     private boolean muted;
 
-    private transient List<PreviewScreen> previewScreens;
+    private final transient List<PreviewScreen> previewScreens;
     private transient CefBrowserCinema browser;
     private transient Video video;
     private transient boolean unregistered;
@@ -173,7 +174,7 @@ public class Screen {
     }
 
     public void seekVideo(int seconds) {
-        // TODO:
+        // TODO: Implement video seeking
     }
 
     public BlockPos getBlockPos() {

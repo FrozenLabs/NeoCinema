@@ -1,4 +1,4 @@
-package com.neocinema.fabric.mixins;
+package com.neocinema.fabric.mixins.client.render;
 
 import com.neocinema.fabric.cef.CefUtil;
 import net.minecraft.client.render.GameRenderer;
@@ -9,13 +9,11 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(GameRenderer.class)
-public class CefRenderMixin {
-
-    @Inject(method = "render", at = @At("HEAD"), cancellable = true)
+public class MixinGameRenderer {
+    @Inject(method = "render", at = @At("HEAD"))
     public void render(RenderTickCounter tickCounter, boolean tick, CallbackInfo ci) {
-        if (CefUtil.isInit()){
+        if (CefUtil.isInit()) {
             CefUtil.getCefApp().N_DoMessageLoopWork();
         }
     }
-
 }

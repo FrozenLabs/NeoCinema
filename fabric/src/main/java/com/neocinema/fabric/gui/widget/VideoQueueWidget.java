@@ -13,15 +13,13 @@ import java.util.List;
 
 public class VideoQueueWidget extends ElementListWidget<VideoQueueWidgetEntry> {
 
-    private VideoQueueScreen parent;
-    private int bottom;
+    private final VideoQueueScreen parent;
+    private final int bottom;
 
     public VideoQueueWidget(VideoQueueScreen parent, MinecraftClient client, int width, int height, int top, int bottom, int itemHeight) {
         super(client, width, height, top, itemHeight);
         this.parent = parent;
         this.bottom = bottom;
-        //setRenderHeader(false, 0);
-//        setRenderHorizontalShadows(false);
         update();
     }
 
@@ -42,8 +40,8 @@ public class VideoQueueWidget extends ElementListWidget<VideoQueueWidgetEntry> {
         List<VideoQueueWidgetEntry> entries = new ArrayList<>();
         List<QueuedVideo> queuedVideos = NeoCinemaClient.getInstance().getVideoQueue().getVideos();
         Collections.sort(queuedVideos);
-        for (int i = 0; i < queuedVideos.size(); i++) {
-            entries.add(new VideoQueueWidgetEntry(parent, queuedVideos.get(i), client));
+        for (QueuedVideo queuedVideo : queuedVideos) {
+            entries.add(new VideoQueueWidgetEntry(parent, queuedVideo, client));
         }
         replaceEntries(entries);
     }

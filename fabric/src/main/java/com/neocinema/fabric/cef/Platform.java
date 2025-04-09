@@ -1,7 +1,6 @@
 package com.neocinema.fabric.cef;
 
 public enum Platform {
-
     LINUX_AMD64,
     LINUX_ARM64,
     WINDOWS_AMD64,

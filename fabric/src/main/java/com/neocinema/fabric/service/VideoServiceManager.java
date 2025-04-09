@@ -5,7 +5,7 @@ import java.util.Map;
 
 public class VideoServiceManager {
 
-    private Map<String, VideoService> registry;
+    private final Map<String, VideoService> registry;
 
     public VideoServiceManager() {
         registry = new HashMap<>();
