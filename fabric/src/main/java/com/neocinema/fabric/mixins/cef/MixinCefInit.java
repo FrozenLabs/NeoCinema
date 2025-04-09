@@ -56,7 +56,7 @@ public class MixinCefInit {
         // Check for .minecraft/mods/neocinema-libraries directory, create if not exists
         File neocinemaLibrariesDir = new File("mods/neocinema-libraries");
         if (!neocinemaLibrariesDir.exists()) {
-            if (!neocinemaLibrariesDir.mkdirs()) throw new IOException("Failed to create directory " + neocinemaLibrariesDir.getAbsolutePath());
+            neocinemaLibrariesDir.mkdirs();
         }
         System.setProperty("jcef.path", neocinemaLibrariesDir.getCanonicalPath());
 
@@ -89,7 +89,7 @@ public class MixinCefInit {
                     }
 
                     // For when we run across a nested file, i.e. locales/sl.pak
-                    if (!cefResourceFile.getParentFile().mkdirs()) throw new IOException("Failed to create directory " + cefResourceFile.getParentFile().getAbsolutePath());
+                    cefResourceFile.getParentFile().mkdirs();
 
                     Files.copy(cefResourceInputStream, cefResourceFile.toPath());
                     if (platform.isLinux()) {

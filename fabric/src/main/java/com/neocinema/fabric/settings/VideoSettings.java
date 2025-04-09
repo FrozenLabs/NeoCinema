@@ -111,7 +111,7 @@ public class VideoSettings {
     public void save() throws IOException {
         File file = PATH.toFile();
 
-        if (!file.getParentFile().mkdirs()) { throw new IOException("Failed to create directory " + file.getParent()); }
+        file.getParentFile().mkdirs();
 
         if (!file.exists()) {
             if (!file.createNewFile()) { throw new IOException("Failed to create file " + file); }

@@ -21,8 +21,6 @@ public final class ChatUtil {
     }
 
     public static void showPlaying(Player player, Theater theater, boolean showOriginUrl) {
-        boolean privateTheater = theater instanceof PrivateTheater;
-
         if (!theater.isPlaying()) {
             sendPaddedMessage(player,
                     ChatColor.BOLD + "> Now Playing",
