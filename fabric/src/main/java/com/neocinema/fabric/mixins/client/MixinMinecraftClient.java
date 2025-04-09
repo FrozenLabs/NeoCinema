@@ -1,6 +1,7 @@
 package com.neocinema.fabric.mixins.client;
 
 import com.neocinema.fabric.NeoCinemaClient;
+import com.neocinema.fabric.util.WindowFocusMuteHandler;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import org.spongepowered.asm.mixin.Mixin;
@@ -17,5 +18,11 @@ public class MixinMinecraftClient {
         NeoCinemaClient.getInstance().getVideoServiceManager().unregisterAll();
         NeoCinemaClient.getInstance().getVideoListManager().reset();
         NeoCinemaClient.getInstance().getVideoQueue().clear();
+    }
+
+    @Inject(method = "onWindowFocusChanged", at = @At("RETURN"))
+    public void onWindowFocusChanged(boolean focused, CallbackInfo ci) {
+        if (focused) WindowFocusMuteHandler.gainFocus();
+        else WindowFocusMuteHandler.loseFocus();
     }
 }

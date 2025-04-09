@@ -15,7 +15,6 @@ import com.neocinema.fabric.screen.ScreenManager;
 import com.neocinema.fabric.service.VideoServiceManager;
 import com.neocinema.fabric.settings.VideoSettings;
 import com.neocinema.fabric.util.NetworkUtil;
-import com.neocinema.fabric.util.WindowFocusMuteThread;
 import com.neocinema.fabric.video.list.VideoListManager;
 import com.neocinema.fabric.video.queue.VideoQueue;
 import net.fabricmc.api.ClientModInitializer;
@@ -105,8 +104,6 @@ public class NeoCinemaClient implements ClientModInitializer {
         } catch (IOException e) {
             NeoCinema.LOGGER.error("Could not load video settings!", e);
         }
-
-        new WindowFocusMuteThread().start();
 
         VideoQueueScreen.registerKeyInput();
         VideoRequestBrowser.registerKeyInput();
