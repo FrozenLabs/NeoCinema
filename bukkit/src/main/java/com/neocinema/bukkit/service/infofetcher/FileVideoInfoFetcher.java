@@ -48,11 +48,9 @@ public class FileVideoInfoFetcher extends VideoInfoFetcher {
                 if (!result.isEmpty()) {
                     try {
                         VideoServiceType serviceType = VideoServiceType.FILE;
-                        String id = url;
-                        String title = url;
                         String thumbnailUrl = "https://cinemamodstatic.ewr1.vultrobjects.com/images/file_thumbnail.jpg";
                         float durationSeconds = Float.parseFloat(result);
-                        return new VideoInfo(serviceType, id, title, requesterUsername, thumbnailUrl, (long) durationSeconds);
+                        return new VideoInfo(serviceType, url, url, requesterUsername, thumbnailUrl, (long) durationSeconds);
                     } catch (NumberFormatException ignored) {
                     }
                 }

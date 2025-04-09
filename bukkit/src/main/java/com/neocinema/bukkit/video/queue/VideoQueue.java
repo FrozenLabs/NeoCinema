@@ -3,8 +3,6 @@ package com.neocinema.bukkit.video.queue;
 import com.neocinema.bukkit.NeoCinemaPlugin;
 import com.neocinema.bukkit.buffer.PacketByteBufReimpl;
 import com.neocinema.bukkit.event.queue.*;
-import com.neocinema.bukkit.event.queue.*;
-import com.neocinema.bukkit.event.queue.*;
 import com.neocinema.bukkit.video.VideoInfo;
 import com.neocinema.bukkit.theater.PrivateTheater;
 import com.neocinema.bukkit.theater.Theater;
@@ -30,32 +28,30 @@ public class VideoQueue {
         priorityQueue = new PriorityQueue<>();
     }
 
-    public boolean upvoteVideo(Player voter, Video video) {
-        return addVote(voter, video, QueueVoteType.UP_VOTE);
+    public void upvoteVideo(Player voter, Video video) {
+        addVote(voter, video, QueueVoteType.UP_VOTE);
     }
 
-    public boolean downvoteVideo(Player voter, Video video) {
-        return addVote(voter, video, QueueVoteType.DOWN_VOTE);
+    public void downvoteVideo(Player voter, Video video) {
+        addVote(voter, video, QueueVoteType.DOWN_VOTE);
     }
 
-    private boolean addVote(Player voter, Video video, QueueVoteType voteType) {
+    private void addVote(Player voter, Video video, QueueVoteType voteType) {
         priorityQueue.remove(video);
         boolean changed = video.addVote(voter, voteType);
         priorityQueue.add(video);
         if (changed) {
             callQueueChangeEvent(new TheaterQueueVoteAddEvent(theater, voter, voteType));
         }
-        return changed;
     }
 
-    public boolean removeVote(Player voter, Video video) {
+    public void removeVote(Player voter, Video video) {
         priorityQueue.remove(video);
         boolean changed = video.removeVote(voter);
         priorityQueue.add(video);
         if (changed) {
             callQueueChangeEvent(new TheaterQueueVoteRemoveEvent(theater, voter));
         }
-        return changed;
     }
 
     public void processPlayerRequest(VideoInfo videoInfo, Player player) {
