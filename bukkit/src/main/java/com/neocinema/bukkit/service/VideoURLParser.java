@@ -2,10 +2,9 @@ package com.neocinema.bukkit.service;
 
 import com.neocinema.bukkit.NeoCinemaPlugin;
 import com.neocinema.bukkit.service.infofetcher.*;
-import com.neocinema.bukkit.service.infofetcher.*;
-import com.neocinema.bukkit.service.infofetcher.*;
 import org.bukkit.entity.Player;
-import java.net.URL;
+
+import java.net.URI;
 import java.io.IOException;
 
 import java.util.regex.Matcher;
@@ -21,10 +20,6 @@ public class VideoURLParser {
     public VideoURLParser(NeoCinemaPlugin neoCinemaPlugin, String url) {
         this.neoCinemaPlugin = neoCinemaPlugin;
         this.url = url;
-    }
-
-    public String getUrl() {
-        return url;
     }
 
     public void parse(Player player) {
@@ -55,10 +50,9 @@ public class VideoURLParser {
         String mediaLink = getLink(url, "^https?:\\/\\/[\\W\\w\\-]+(\\.[\\W\\w\\-]+)*\\/[\\W\\w\\-]+\\.(mp[3-4]|ts|ogg|opus|webm|m4v)(.*)?$", 0);
         if (mediaLink != null) {
             infoFetcher = new FileVideoInfoFetcher("neocinema.request.file", url, player == null ? "server" : player.getName());
-            return;
         }
-
     }
+
     private static String getLink(String url, String regex, int group) {
         String link = null;
         Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
@@ -69,10 +63,10 @@ public class VideoURLParser {
             }
             else {
                 Pattern mimePattern = Pattern.compile(
-                    "(video|audio|application)\\/(mp4|mp3|opus|mp2t|wav|webm|mkv|mpegurl|vnd.apple.mpegurl)", 
+                        "(video|audio|application)/(mp4|mp3|opus|mp2t|wav|webm|mkv|mpegurl|vnd.apple.mpegurl)",
                     Pattern.CASE_INSENSITIVE);
                 try {
-                    String contentTypeResponse = new URL(url).openConnection().getContentType();
+                    String contentTypeResponse = URI.create(url).toURL().openConnection().getContentType();
                     Matcher mimeMatcher = mimePattern.matcher(contentTypeResponse);
                     if (mimeMatcher.find()) {
                         link = matcher.group(group); 
