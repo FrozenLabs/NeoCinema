@@ -51,6 +51,6 @@ tasks {
     }
 
     named<ShadowJar>("shadowJar") {
-        archiveBaseName.set("LunarCinemas-${project.parent?.version}")
+        archiveBaseName.set("neocinema-${project.parent?.version}")
     }
 }
