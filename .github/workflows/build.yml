@@ -26,11 +26,11 @@ jobs:
       - name: Upload Bukkit JAR
         uses: actions/upload-artifact@v4.3.0
         with:
-          name: bukkit
+          name: neocinema-dev-bukkit
           path: bukkit/build/libs/*.jar
 
-      - name: Upload Windows AMD64 JAR
+      - name: Upload NeoCinema JAR
         uses: actions/upload-artifact@v4.3.0
         with:
-          name: jar_windows_amd64
+          name: neocinema-dev-universal
           path: fabric/build/libs/*universal.jar
