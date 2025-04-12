@@ -15,6 +15,13 @@ base.archivesName.set(project.property("archives_base_name") as String)
 version = project.property("mod_version") as String
 group = project.property("maven_group") as String
 
+repositories {
+	maven("https://pkgs.dev.azure.com/djtheredstoner/DevAuth/_packaging/public/maven/v1")
+	maven {
+		url = uri("https://oss.sonatype.org/content/repositories/snapshots/")
+	}
+}
+
 dependencies {
 	"minecraft"("com.mojang:minecraft:${project.property("minecraft_version")}")
 	"mappings"("net.fabricmc:yarn:${project.property("yarn_mappings")}:v2")
@@ -22,6 +29,13 @@ dependencies {
 	"modImplementation"("net.fabricmc.fabric-api:fabric-api:${project.property("fabric_version")}")
 	implementation("org.apache.logging.log4j:log4j-api:2.20.0")
 	implementation("org.apache.logging.log4j:log4j-core:2.20.0")
+	modRuntimeOnly("me.djtheredstoner:DevAuth-fabric:1.2.1")
+	implementation("uk.co.caprica:vlcj:5.0.0-SNAPSHOT")
+	implementation("uk.co.caprica:vlcj-natives:5.0.0-SNAPSHOT")
+}
+
+tasks.runClient {
+	jvmArgs("-Ddevauth.enabled=true")
 }
 
 tasks.processResources {
@@ -53,83 +67,15 @@ tasks.jar {
 }
 
 sourceSets {
-	val jcef by creating {
-		java.srcDir("java-cef/java")
-		java.exclude("**/tests/**")
-	}
-
-	named("main") {
-		compileClasspath += jcef.output
-		runtimeClasspath += jcef.output
-	}
-}
-
-idea {
-	module {
-		excludeDirs.add(file("java-cef/java/tests"))
-		inheritOutputDirs = true
-	}
-}
-
-val platforms = listOf("windows_amd64", "linux_amd64", "linux_arm64")
-val cefBranch by properties
-
-tasks.register("downloadJcef") {
-	doLast {
-		platforms.forEach { platform ->
-			try {
-				val manifestUrl = URL("https://ewr1.vultrobjects.com/cinemamod-jcef/$cefBranch/$platform/manifest.txt")
-				manifestUrl.readText().lineSequence().forEach { line: String ->
-					val (fileHash, relFilePath) = line.trim().split("  ")
-					val cefResourceUrl = "https://ewr1.vultrobjects.com/cinemamod-jcef/$cefBranch/$platform/$relFilePath"
-					val outputFile = file("$buildDir/cef/$platform/$relFilePath")
-
-					val downloadTask = tasks.create<Download>("download_${platform}_${relFilePath.hashCode()}") {
-						src(cefResourceUrl)
-						dest(outputFile)
-						overwrite(false)
-					}
-
-					downloadTask.download()
-
-					if (Os.isFamily(Os.FAMILY_UNIX)) {
-						if (relFilePath.contains("chrome-sandbox") || relFilePath.contains("jcef_helper")) {
-							exec {
-								commandLine("chmod", "700", outputFile.absolutePath)
-							}
-						}
-					}
-				}
-			} catch (e: Exception) {
-				println("Skipping CEF libraries for $cefBranch/$platform")
-				println(e.message)
-			}
-		}
-	}
-}
-
-fun createPlatformJarTask(platform: String) {
-	tasks.register<RemapJarTask>("jar_$platform") {
-		inputFile.set(tasks.jar.get().archiveFile)
-		dependsOn(tasks.named("jar"), tasks.named("downloadJcef"))
-
-		onlyIf {
-			file("$buildDir/cef/$platform").exists()
-		}
-
-		into("cef") {
-			from("$buildDir/cef/$platform")
-		}
-
-		from(sourceSets["main"].output)
-		from(sourceSets["jcef"].output)
-
-		archiveAppendix.set(platform)
-	}
-}
-
-platforms.forEach { platform ->
-	createPlatformJarTask(platform)
+//	val jcef by creating {
+//		java.srcDir("java-cef/java")
+//		java.exclude("**/tests/**")
+//	}
+//
+//	named("main") {
+//		compileClasspath += jcef.output
+//		runtimeClasspath += jcef.output
+//	}
 }
 
 publishing {

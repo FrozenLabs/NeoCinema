@@ -136,7 +136,7 @@ public class VideoSettingsScreen extends Screen {
         NeoCinemaClient.getInstance().getVideoSettings().saveAsync();
         if (shouldReloadScreen) {
             for (com.neocinema.fabric.screen.Screen screen : NeoCinemaClient.getInstance().getScreenManager().getScreens()) {
-                if (screen.hasBrowser()) {
+                if (screen.hasPlayer()) {
                     screen.reload();
                 }
             }

@@ -1,4 +1,4 @@
-package com.neocinema.fabric.block.render;
+package com.neocinema.fabric.util;
 
 import net.minecraft.client.gl.ShaderProgramKeys;
 import net.minecraft.client.render.*;

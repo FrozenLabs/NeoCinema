@@ -1,4 +1,4 @@
-package com.neocinema.fabric.screen;
+package com.neocinema.fabric.screen.preview;
 
 import net.minecraft.util.math.BlockPos;
 

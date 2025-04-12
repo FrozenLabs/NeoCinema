@@ -1,12 +1,12 @@
-package com.neocinema.fabric.block.render;
+package com.neocinema.fabric.block.preview;
 
+import com.neocinema.fabric.util.RenderUtil;
 import net.minecraft.client.render.LightmapTextureManager;
 import org.joml.Quaternionf;
 
 import com.neocinema.fabric.NeoCinemaClient;
-import com.neocinema.fabric.block.PreviewScreenBlockEntity;
-import com.neocinema.fabric.screen.PreviewScreen;
-import com.neocinema.fabric.screen.PreviewScreenManager;
+import com.neocinema.fabric.screen.preview.PreviewScreen;
+import com.neocinema.fabric.screen.preview.PreviewScreenManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 
 import net.minecraft.client.MinecraftClient;

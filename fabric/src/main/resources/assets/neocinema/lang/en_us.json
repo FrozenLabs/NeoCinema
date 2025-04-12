@@ -1,22 +1,22 @@
 {
-  "category.neocinema.keybinds": "Neo Cinema",
+  "category.neocinema.key-binds": "Neo Cinema",
 
-  "key.neocinema.openvideoqueue": "Open Video Queue",
+  "key.neocinema.open-video-queue": "Open Video Queue",
   "key.neocinema.open-request-browser": "Open Video Request Browser",
 
   "gui.neocinema.video-history.title": "Video History",
 
-  "gui.neocinema.videoqueuetitle": "Video Queue",
-  "gui.neocinema.videoqueueentries": "Video Queue - %d entries",
-  "gui.neocinema.videoqueuenovideos": "No videos queued",
-  "gui.neocinema.videoqueueupnext": "UP NEXT %s",
+  "gui.neocinema.video-queue.title": "Video Queue",
+  "gui.neocinema.video-queue.entries": "Video Queue - %d entries",
+  "gui.neocinema.video-queue.no-videos": "The queue is empty",
+  "gui.neocinema.video-queue.up-next": "Up Next %s",
 
   "gui.neocinema.video-settings.title": "Video Settings",
   "gui.neocinema.video-settings.volume": "Volume",
-  "gui.neocinema.video-settings.mute": "Mute video while alt-tabbed",
-  "gui.neocinema.video-settings.cross-hair": "Hide crosshair while video playing",
-  "gui.neocinema.video-settings.resolution": "Screen resolution: %d%s",
-  "gui.neocinema.video-settings.refresh-rate": "Screen refresh rate: %d %s",
+  "gui.neocinema.video-settings.mute": "Mute when Out of Focus",
+  "gui.neocinema.video-settings.cross-hair": "Disable Crosshair During Playback",
+  "gui.neocinema.video-settings.resolution": "Screen Resolution: %d%s",
+  "gui.neocinema.video-settings.refresh-rate": "Screen Frame Rate: %d %s",
 
   "gui.neocinema.video-request.title": "Video Request Browser",
   "gui.neocinema.video-request.btn": "Request"

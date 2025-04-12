@@ -7,6 +7,9 @@
   "entrypoints": {
     "client": [
       "com.neocinema.fabric.NeoCinemaClient"
+    ],
+    "main": [
+      "com.neocinema.fabric.NeoCinema"
     ]
   },
   "contact": {

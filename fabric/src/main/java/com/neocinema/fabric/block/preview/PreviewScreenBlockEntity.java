@@ -1,4 +1,4 @@
-package com.neocinema.fabric.block;
+package com.neocinema.fabric.block.preview;
 
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.minecraft.block.BlockState;

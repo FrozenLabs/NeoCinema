@@ -95,7 +95,7 @@ public class Video implements Comparable<Video>, PacketByteBufSerializable<Video
         return stringBuilder.toString();
     }
 
-    private static String reduceFormattedDuration(String formatted) {
+    public static String reduceFormattedDuration(String formatted) {
         StringBuilder stringBuilder = new StringBuilder();
         String[] split = formatted.split(":");
 

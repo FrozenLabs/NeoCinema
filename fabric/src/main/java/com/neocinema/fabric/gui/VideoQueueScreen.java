@@ -35,13 +35,13 @@ public class VideoQueueScreen extends Screen {
     public VideoQueueWidget videoQueueWidget;
 
     public VideoQueueScreen() {
-        super(Text.translatable("gui.neocinema.videoqueuetitle"));
+        super(Text.translatable("gui.neocinema.video-queue.title"));
     }
 
     @Override
     protected void init() {
         videoQueueWidget = new VideoQueueWidget(this, client, this.width, this.height, 68, this.method_31361(), 19);
-        ButtonWidget.Builder videoSettingsBuilder = new Builder(Text.translatable("gui.neocinema.videosettingstitle"), button -> {
+        ButtonWidget.Builder videoSettingsBuilder = new Builder(Text.translatable("gui.neocinema.video-settings.title"), button -> {
             client.setScreen(new VideoSettingsScreen());
         });
 
@@ -79,15 +79,15 @@ public class VideoQueueScreen extends Screen {
         for (int k = 0; k < j; ++k)
             context.drawTexture(GUI_TEXTURED,TEXTURE, i, 72 + 16 * k, 1, 10, 236, 16, 256, 256);
         context.drawTexture(GUI_TEXTURED,TEXTURE, i, 72 + 16 * j, 1, 27, 236, 8, 256, 256);
-        context.drawCenteredTextWithShadow(this.client.textRenderer, Text.translatable("gui.neocinema.videoqueueentries", videoQueueWidget.children().size()), this.width / 2, 64 - 10, -1);
+        context.drawCenteredTextWithShadow(this.client.textRenderer, Text.translatable("gui.neocinema.video-queue.entries", videoQueueWidget.children().size()), this.width / 2, 64 - 10, -1);
         if (videoQueueWidget.children().isEmpty()) {
-            context.drawCenteredTextWithShadow(this.client.textRenderer, Text.translatable("gui.neocinema.videoqueuenovideos"), this.width / 2, (56 + this.method_31361()) / 2, -1);
+            context.drawCenteredTextWithShadow(this.client.textRenderer, Text.translatable("gui.neocinema.video-queue.no-videos"), this.width / 2, (56 + this.method_31361()) / 2, -1);
         } else {
             //not found getScrollAmount()
 //            if (videoQueueWidget.getScrollAmount() == 0f) {
-//                context.drawCenteredTextWithShadow(this.client.textRenderer, Text.translatable("gui.neocinema.videoqueueupnext", " ->"), -158 + this.width / 2, 64 + 12, -1);
+//                context.drawCenteredTextWithShadow(this.client.textRenderer, Text.translatable("gui.neocinema.video-queue.up-next", " ->"), -158 + this.width / 2, 64 + 12, -1);
 //            }
-            context.drawCenteredTextWithShadow(this.client.textRenderer, Text.translatable("gui.neocinema.videoqueueupnext", " ->"), -158 + this.width / 2, 64 + 12, -1);
+            context.drawCenteredTextWithShadow(this.client.textRenderer, Text.translatable("gui.neocinema.video-queue.up-next", " ->"), -158 + this.width / 2, 64 + 12, -1);
         }
     }
 
@@ -125,10 +125,10 @@ public class VideoQueueScreen extends Screen {
 
     public static void registerKeyInput() {
         keyBinding = KeyBindingHelper.registerKeyBinding(new KeyBinding(
-                "key.neocinema.openvideoqueue",
+                "key.neocinema.open-video-queue",
                 InputUtil.Type.KEYSYM,
                 GLFW.GLFW_KEY_R,
-                "category.neocinema.keybinds"
+                "category.neocinema.key-binds"
         ));
 
         ClientTickEvents.START_CLIENT_TICK.register(client -> {

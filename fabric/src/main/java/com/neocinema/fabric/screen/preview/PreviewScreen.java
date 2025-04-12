@@ -1,6 +1,6 @@
-package com.neocinema.fabric.screen;
+package com.neocinema.fabric.screen.preview;
 
-import com.neocinema.fabric.block.PreviewScreenBlock;
+import com.neocinema.fabric.block.preview.PreviewScreenBlock;
 import com.neocinema.fabric.util.ImageUtil;
 import com.neocinema.fabric.video.VideoInfo;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientChunkEvents;

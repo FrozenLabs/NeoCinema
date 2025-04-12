@@ -15,7 +15,6 @@ public class MixinMinecraftClient {
     private void disconnect(Screen disconnectionScreen, boolean transferring, CallbackInfo ci) {
         NeoCinemaClient.getInstance().getScreenManager().unloadAll();
         NeoCinemaClient.getInstance().getPreviewScreenManager().unloadAll();
-        NeoCinemaClient.getInstance().getVideoServiceManager().unregisterAll();
         NeoCinemaClient.getInstance().getVideoListManager().reset();
         NeoCinemaClient.getInstance().getVideoQueue().clear();
     }

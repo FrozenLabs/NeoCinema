@@ -1,7 +1,7 @@
 package com.neocinema.fabric.payload.inbound;
 
 import com.neocinema.fabric.NeoCinema;
-import com.neocinema.fabric.buffer.IdCodec;
+import com.neocinema.fabric.codec.IdCodec;
 import com.neocinema.fabric.video.list.VideoListEntry;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.packet.CustomPayload;

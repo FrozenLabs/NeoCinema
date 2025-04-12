@@ -1,7 +1,6 @@
 package com.neocinema.fabric.video;
 
 import com.neocinema.fabric.NeoCinemaClient;
-import com.neocinema.fabric.service.VideoService;
 import net.minecraft.network.PacketByteBuf;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.jetbrains.annotations.Nullable;
@@ -10,25 +9,18 @@ import java.util.Objects;
 
 @SuppressWarnings("unused")
 public class VideoInfo {
-
-    private VideoService videoService;
     private String id;
     private String title;
     private String poster;
     private String thumbnailUrl;
     private long durationSeconds;
 
-    public VideoInfo(VideoService videoService, String id) {
-        this.videoService = videoService;
+    public VideoInfo(String id) {
         this.id = id;
     }
 
     public VideoInfo() {
 
-    }
-
-    public VideoService getVideoService() {
-        return videoService;
     }
 
     public String getId() {
@@ -104,17 +96,15 @@ public class VideoInfo {
         if (!(o instanceof VideoInfo videoInfo)) {
             return false;
         }
-        return videoService == videoInfo.videoService && Objects.equals(id, videoInfo.id);
+        return Objects.equals(id, videoInfo.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(videoService, id);
+        return Objects.hash(id);
     }
 
     public VideoInfo fromBytes(PacketByteBuf buf) {
-        videoService = NeoCinemaClient.getInstance().getVideoServiceManager().getByName(buf.readString());
-        if (videoService == null) return null;
         id = buf.readString();
         title = buf.readString();
         poster = buf.readString();
@@ -124,7 +114,6 @@ public class VideoInfo {
     }
 
     public void toBytes(PacketByteBuf buf) {
-        buf.writeString(videoService.getName());
         buf.writeString(id);
         buf.writeString(title);
         buf.writeString(poster);

@@ -31,8 +31,6 @@ public class PlayerJoinQuitListener implements Listener {
 
             neoCinemaPlugin.getPlayerDataManager().getData(player.getUniqueId());
 
-            NetworkUtil.sendRegisterServicesPacket(neoCinemaPlugin, player);
-
             List<Screen> screens = neoCinemaPlugin.getTheaterManager().getTheaters()
                     .stream()
                     .map(Theater::getScreen)

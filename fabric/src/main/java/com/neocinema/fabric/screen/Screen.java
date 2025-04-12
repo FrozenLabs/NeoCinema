@@ -1,14 +1,15 @@
 package com.neocinema.fabric.screen;
 
-import com.neocinema.fabric.block.ScreenBlock;
-import com.neocinema.fabric.cef.CefBrowserCinema;
-import com.neocinema.fabric.cef.CefUtil;
+import com.neocinema.fabric.block.screen.ScreenBlock;
+import com.neocinema.fabric.screen.preview.PreviewScreen;
 import com.neocinema.fabric.video.Video;
+import com.neocinema.fabric.video.playback.VideoLanPlayback;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientChunkEvents;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.math.BlockPos;
+import uk.co.caprica.vlcj.media.MediaSlaveType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +27,7 @@ public class Screen {
     private boolean muted;
 
     private final transient List<PreviewScreen> previewScreens;
-    private transient CefBrowserCinema browser;
+    private transient VideoLanPlayback player;
     private transient Video video;
     private transient boolean unregistered;
     private transient BlockPos blockPos; // used as a cache for performance
@@ -95,12 +96,12 @@ public class Screen {
         previewScreens.add(previewScreen);
     }
 
-    public CefBrowserCinema getBrowser() {
-        return browser;
+    public VideoLanPlayback getPlayer() {
+        return player;
     }
 
-    public boolean hasBrowser() {
-        return browser != null;
+    public boolean hasPlayer() {
+        return player != null;
     }
 
     public void reload() {
@@ -112,13 +113,14 @@ public class Screen {
     public void loadVideo(Video video) {
         this.video = video;
         closeBrowser();
-        browser = CefUtil.createBrowser(video.getVideoInfo().getVideoService().getUrl(), this);
+        player = new VideoLanPlayback();
+        startVideo();
     }
 
     public void closeBrowser() {
-        if (browser != null) {
-            browser.close();
-            browser = null;
+        if (player != null) {
+            player.close();
+            player = null;
         }
     }
 
@@ -127,54 +129,23 @@ public class Screen {
     }
 
     public void setVideoVolume(float volume) {
-        if (browser != null && video != null) {
-            String js = video.getVideoInfo().getVideoService().getSetVolumeJs();
-
-            // 0-100 volume
-            if (js.contains("%d")) {
-                js = String.format(js, (int) (volume * 100));
-            }
-
-            // 0.00-1.00 volume
-            else if (js.contains("%f")) {
-                js = String.format(js, volume);
-            }
-
-            browser.getMainFrame().executeJavaScript(js, browser.getURL(), 0);
+        if (player != null && video != null) {
+            player.mediaPlayer().audio().setVolume((int) (volume * 100));
         }
     }
 
     public void startVideo() {
-        if (browser != null && video != null) {
-            String startJs = video.getVideoInfo().getVideoService().getStartJs();
+        if (player == null || video == null) return;
 
-            if (startJs.contains("%s") && startJs.contains("%b")) {
-                startJs = String.format(startJs, video.getVideoInfo().getId(), video.getVideoInfo().isLivestream());
-            } else if (startJs.contains("%s")) {
-                startJs = String.format(startJs, video.getVideoInfo().getId());
-            }
-
-            browser.getMainFrame().executeJavaScript(startJs, browser.getURL(), 0);
-
-            // Seek to current time
-            if (!video.getVideoInfo().isLivestream()) {
-                long millisSinceStart = System.currentTimeMillis() - video.getStartedAt();
-                long secondsSinceStart = millisSinceStart / 1000;
-                if (secondsSinceStart < video.getVideoInfo().getDurationSeconds()) {
-                    String seekJs = video.getVideoInfo().getVideoService().getSeekJs();
-
-                    if (seekJs.contains("%d")) {
-                        seekJs = String.format(seekJs, secondsSinceStart);
-                    }
-
-                    browser.getMainFrame().executeJavaScript(seekJs, browser.getURL(), 0);
-                }
-            }
-        }
+        long resumeTimeMs = System.currentTimeMillis() - video.getStartedAt();
+        String mediaUrl = video.getVideoInfo().getId();
+        player.mediaPlayer().media().addSlave(MediaSlaveType.SUBTITLE, video.getVideoInfo().getId().replace("mp4", "srt"), true);
+        player.play(mediaUrl);
     }
 
+
     public void seekVideo(int seconds) {
-        // TODO: Implement video seeking
+        player.mediaPlayer().controls().setTime(seconds * 1000L);
     }
 
     public BlockPos getBlockPos() {

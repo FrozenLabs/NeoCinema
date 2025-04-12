@@ -1,10 +1,10 @@
-package com.neocinema.fabric.block.render;
+package com.neocinema.fabric.block.screen;
 
 import com.neocinema.fabric.NeoCinemaClient;
-import com.neocinema.fabric.block.ScreenBlockEntity;
 import com.neocinema.fabric.screen.Screen;
 import com.neocinema.fabric.screen.ScreenManager;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.neocinema.fabric.util.RenderUtil;
 import net.minecraft.client.render.Tessellator;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.block.entity.BlockEntityRenderer;
@@ -22,6 +22,7 @@ public class ScreenBlockEntityRenderer implements BlockEntityRenderer<ScreenBloc
         ScreenManager screenManager = NeoCinemaClient.getInstance().getScreenManager();
         Screen screen = screenManager.getScreen(entity.getPos());
         if (screen == null || !screen.isVisible()) return;
+
         RenderSystem.enableDepthTest();
         Tessellator tessellator = Tessellator.getInstance();
         renderScreenTexture(screen, matrices, tessellator);
@@ -34,8 +35,9 @@ public class ScreenBlockEntityRenderer implements BlockEntityRenderer<ScreenBloc
         RenderUtil.moveForward(matrices, screen.getFacing(), 0.008f);
         RenderUtil.fixRotation(matrices, screen.getFacing());
         matrices.scale(screen.getWidth(), screen.getHeight(), 0);
-        if (screen.hasBrowser()) {
-            int glId = screen.getBrowser().renderer.getTextureID();
+        if (screen.hasPlayer()) {
+            screen.getPlayer().sync();
+            int glId = screen.getPlayer().texture();
             RenderUtil.renderTexture(matrices, tessellator, glId);
         } else {
             RenderUtil.renderBlack(matrices, tessellator);
