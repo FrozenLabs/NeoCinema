@@ -3,7 +3,25 @@
   "id": "neocinema",
   "name": "NeoCinema",
   "version": "${version}",
-  "license": "MIT",
+  "description" : "A Minecraft mod to watch videos in-game with others.",
+  "license": "AGPL-3.0-or-later",
+  "authors" : [
+    {
+      "name" : "Lunasa (lunasa0x01)",
+      "contact" : {
+        "email" : "me@lunasa.dev",
+        "homepage" : "https://lunasa.dev"
+      }
+    },
+    {
+      "name" : "CinemaMod",
+      "contact" : {
+        "homepage" : "https://github.com/CinemaMod"
+      }
+    }
+  ],
+  "icon" : "assets/neocinema/icon.png",
+  "environment" : "client",
   "entrypoints": {
     "client": [
       "com.neocinema.fabric.NeoCinemaClient"
@@ -13,10 +31,19 @@
     ]
   },
   "contact": {
-    "homepage": "https://github.com/neocinema/neocinema-Fabric",
-    "sources": "https://github.com/neocinema/neocinema-Fabric",
-    "issues": "https://github.com/neocinema/neocinema-Fabric/issues",
-    "discord": "https://discord.gg/rNrh5kW8Ty"
+    "homepage": "https://github.com/FrozenLabs/NeoCinema",
+    "sources": "https://github.com/FrozenLabs/NeoCinema",
+    "issues": "https://github.com/FrozenLabs/NeoCinema/issues",
+    "discord": "https://discord.gg/TURs8EMUSv"
+  },
+  "custom" : {
+    "modmenu" : {
+      "links" : {
+        "modmenu.discord" : "https://discord.gg/TURs8EMUSv",
+        "modmenu.github_releases" : "https://github.com/FrozenLabs/NeoCinema/releases",
+        "modmenu.modrinth" : "https://modrinth.com/mod/neocinema"
+      }
+    }
   },
   "mixins": [
     "neocinema.mixins.json"
