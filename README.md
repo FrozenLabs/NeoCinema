@@ -2,8 +2,12 @@
   <img src="assets/icon.png" width="120" style="border-radius: 20px;" alt="NeoCinema Logo">
 
   <h1>NeoCinema</h1>
-  <em>Bring the magic of cinema to your Minecraft world</em>  
+  <em>Bring the magic of cinema to your Minecraft world</em>
+</div>
 
+---
+
+<div align="center">
   <a href="https://modrinth.com/mod/neocinema"><img src="https://img.shields.io/badge/Download-Modrinth-1bd96a?style=for-the-badge&logo=modrinth"></a>  
   <a href="https://discord.gg/TURs8EMUSv"><img src="https://img.shields.io/badge/Join-Discord-5865F2?style=for-the-badge&logo=discord"></a>
 </div>
