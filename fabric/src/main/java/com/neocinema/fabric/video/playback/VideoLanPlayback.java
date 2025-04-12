@@ -20,17 +20,20 @@ public final class VideoLanPlayback {
     private final MediaPlayerFactory mediaPlayerFactory;
     private final EmbeddedMediaPlayer mediaPlayer;
 
-    private final int videoWidth = 1920;
-    private final int videoHeight = 1090;
-    private final int bufferSize = videoWidth * videoHeight * 4;
+    private int sourceWidth;
+    private int sourceHeight;
+    private int targetWidth;
+    private int targetHeight;
+    private int bufferSize;
+    private boolean dimensionsChanged = false;
 
     private final int[] pboIds = new int[2];
-    private final ByteBuffer stagingBuffer = ByteBuffer.allocateDirect(bufferSize);
+    private ByteBuffer stagingBuffer;
     private int activePboIndex = 0;
     private boolean frameAvailable = false;
     private boolean hasPlayed = false;
 
-    private final int textureIdVideo;
+    private int textureIdVideo;
 
     public VideoLanPlayback() {
         mediaPlayerFactory = new MediaPlayerFactory(
@@ -41,24 +44,14 @@ public final class VideoLanPlayback {
         );
         mediaPlayer = mediaPlayerFactory.mediaPlayers().newEmbeddedMediaPlayer();
 
-        GL15.glGenBuffers(pboIds);
-        for (int pboId : pboIds) {
-            GL15.glBindBuffer(GL21.GL_PIXEL_UNPACK_BUFFER, pboId);
-            GL15.glBufferData(GL21.GL_PIXEL_UNPACK_BUFFER, bufferSize, GL15.GL_STREAM_DRAW);
-        }
-        GL15.glBindBuffer(GL21.GL_PIXEL_UNPACK_BUFFER, 0);
-
         mediaPlayer.videoSurface().set(new CallbackVideoSurface(
                 new DirectBufferFormatCallback(),
                 new DirectRenderCallback(),
                 true
         ));
 
-        textureIdVideo = emptyTexture(videoWidth, videoHeight);
-        glBindTexture(GL_TEXTURE_2D, textureIdVideo);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glBindTexture(GL_TEXTURE_2D, 0);
+        textureIdVideo = 0;
+        stagingBuffer = ByteBuffer.allocateDirect(0);
     }
 
     public void play(String media, String... options) {
@@ -67,7 +60,14 @@ public final class VideoLanPlayback {
     }
 
     public void sync() {
-        if (!hasPlayed || !frameAvailable) return;
+        if (!hasPlayed) return;
+
+        if (dimensionsChanged) {
+            initGraphics();
+            dimensionsChanged = false;
+        }
+
+        if (!frameAvailable) return;
 
         synchronized (this) {
             final int pboIndex = activePboIndex;
@@ -96,8 +96,8 @@ public final class VideoLanPlayback {
                     0,
                     0,
                     0,
-                    videoWidth,
-                    videoHeight,
+                    targetWidth,
+                    targetHeight,
                     GL11.GL_RGBA,
                     GL11.GL_UNSIGNED_BYTE,
                     0
@@ -128,9 +128,48 @@ public final class VideoLanPlayback {
         return mediaPlayer;
     }
 
-    private static final class DirectBufferFormatCallback extends BufferFormatCallbackAdapter {
+    private void initGraphics() {
+        if (textureIdVideo != 0) {
+            GL11.glDeleteTextures(textureIdVideo);
+        }
+        GL15.glDeleteBuffers(pboIds);
+
+        bufferSize = targetWidth * targetHeight * 4;
+        stagingBuffer = ByteBuffer.allocateDirect(bufferSize);
+
+        GL15.glGenBuffers(pboIds);
+        for (int pboId : pboIds) {
+            GL15.glBindBuffer(GL21.GL_PIXEL_UNPACK_BUFFER, pboId);
+            GL15.glBufferData(GL21.GL_PIXEL_UNPACK_BUFFER, bufferSize, GL15.GL_STREAM_DRAW);
+        }
+        GL15.glBindBuffer(GL21.GL_PIXEL_UNPACK_BUFFER, 0);
+
+        textureIdVideo = emptyTexture(targetWidth, targetHeight);
+        glBindTexture(GL_TEXTURE_2D, textureIdVideo);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glBindTexture(GL_TEXTURE_2D, 0);
+    }
+
+    private final class DirectBufferFormatCallback extends BufferFormatCallbackAdapter {
         @Override
         public BufferFormat getBufferFormat(int sourceWidth, int sourceHeight) {
+            VideoLanPlayback.this.sourceWidth = sourceWidth;
+            VideoLanPlayback.this.sourceHeight = sourceHeight;
+
+            float targetAspect = 16.0f / 9.0f;
+            float sourceAspect = (float) sourceWidth / sourceHeight;
+
+            if (sourceAspect > targetAspect) {
+                targetWidth = sourceWidth;
+                targetHeight = (int) (targetWidth / targetAspect);
+            } else {
+                targetHeight = sourceHeight;
+                targetWidth = (int) (targetHeight * targetAspect);
+            }
+
+            dimensionsChanged = true;
+
             return new StandardBufferFormat(sourceWidth, sourceHeight);
         }
     }
@@ -148,9 +187,34 @@ public final class VideoLanPlayback {
 
             ByteBuffer nativeBuffer = nativeBuffers[0];
             synchronized (VideoLanPlayback.this) {
-                nativeBuffer.rewind();
+                if (stagingBuffer == null || stagingBuffer.capacity() != bufferSize) {
+                    return;
+                }
+
                 stagingBuffer.rewind();
-                stagingBuffer.put(nativeBuffer);
+                for (int i = 0; i < bufferSize; i++) {
+                    stagingBuffer.put((byte) 0x000000FF);
+                }
+                stagingBuffer.rewind();
+
+                int targetX = Math.max(0, (targetWidth - sourceWidth) / 2);
+                int targetY = Math.max(0, (targetHeight - sourceHeight) / 2);
+
+                int copyWidth = Math.min(sourceWidth, targetWidth - targetX);
+                int copyHeight = Math.min(sourceHeight, targetHeight - targetY);
+
+                for (int y = 0; y < copyHeight; y++) {
+                    int srcPos = y * sourceWidth * 4;
+                    int destPos = ((targetY + y) * targetWidth + targetX) * 4;
+
+                    nativeBuffer.position(srcPos);
+                    nativeBuffer.limit(srcPos + copyWidth * 4);
+                    ByteBuffer srcRow = nativeBuffer.slice();
+
+                    stagingBuffer.position(destPos);
+                    stagingBuffer.put(srcRow);
+                }
+
                 frameAvailable = true;
             }
         }
