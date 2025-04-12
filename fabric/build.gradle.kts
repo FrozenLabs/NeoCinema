@@ -1,8 +1,9 @@
 import org.gradle.kotlin.dsl.java
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 plugins {
 	java
-	id("de.undercouch.download") version "5.4.0"
+	id("com.github.johnrengelman.shadow") version "8.1.1"
 	id("fabric-loom") version "1.7-SNAPSHOT"
 	id("maven-publish")
 }
@@ -18,16 +19,16 @@ repositories {
 	}
 }
 
+val shadowOnly by configurations.creating
+
 dependencies {
 	"minecraft"("com.mojang:minecraft:${project.property("minecraft_version")}")
 	"mappings"("net.fabricmc:yarn:${project.property("yarn_mappings")}:v2")
 	"modImplementation"("net.fabricmc:fabric-loader:${project.property("loader_version")}")
 	"modImplementation"("net.fabricmc.fabric-api:fabric-api:${project.property("fabric_version")}")
-	implementation("org.apache.logging.log4j:log4j-api:2.20.0")
-	implementation("org.apache.logging.log4j:log4j-core:2.20.0")
 	modRuntimeOnly("me.djtheredstoner:DevAuth-fabric:1.2.1")
 	implementation("uk.co.caprica:vlcj:5.0.0-SNAPSHOT")
-	implementation("uk.co.caprica:vlcj-natives:5.0.0-SNAPSHOT")
+	shadowOnly("uk.co.caprica:vlcj:5.0.0-SNAPSHOT")
 }
 
 tasks.runClient {
@@ -44,6 +45,12 @@ tasks.processResources {
 	filesMatching("cinemamod.mixins.json") {
 		expand(project.properties)
 	}
+}
+
+tasks.shadowJar {
+	archiveClassifier.set("universal")
+	configurations = listOf(shadowOnly)
+	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
 tasks.withType<JavaCompile>().configureEach {
@@ -73,3 +80,4 @@ publishing {
 		// Define your Maven publishing destinations here
 	}
 }
+
