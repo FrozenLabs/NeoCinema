@@ -62,6 +62,10 @@ public class VideoInfo implements PacketByteBufSerializable<VideoInfo> {
         return durationSeconds == 0;
     }
 
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof VideoInfo videoInfo)) {
@@ -77,11 +81,6 @@ public class VideoInfo implements PacketByteBufSerializable<VideoInfo> {
 
     @Override
     public VideoInfo fromBytes(PacketByteBufReimpl buf) {
-        try {
-            serviceType = VideoServiceType.valueOf(buf.readString());
-        } catch (Exception e) {
-            return null;
-        }
         id = buf.readString();
         title = buf.readString();
         poster = buf.readString();
@@ -92,7 +91,6 @@ public class VideoInfo implements PacketByteBufSerializable<VideoInfo> {
 
     @Override
     public void toBytes(PacketByteBufReimpl buf) {
-        buf.writeString(serviceType.name());
         buf.writeString(id);
         buf.writeString(title);
         buf.writeString(poster);

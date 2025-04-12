@@ -5,8 +5,8 @@ import java.util.Map;
 
 public class VideoListManager {
 
-    private VideoList history;
-    private Map<String, VideoList> playlists;
+    private final VideoList history;
+    private final Map<String, VideoList> playlists;
 
     public VideoListManager() {
         history = new VideoList();

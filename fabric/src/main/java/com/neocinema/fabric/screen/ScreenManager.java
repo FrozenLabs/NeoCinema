@@ -21,7 +21,7 @@ public class ScreenManager {
         if (screens.containsKey(screen.getPos())) {
             Screen old = screens.get(screen.getPos());
             old.unregister();
-            old.closeBrowser();
+            old.release();
         }
 
         screen.register();
@@ -33,22 +33,9 @@ public class ScreenManager {
         return screens.get(pos);
     }
 
-    // Used for CefClient LoadHandler
-    public Screen getScreen(int browserId) {
-        for (Screen screen : screens.values()) {
-            if (screen.hasBrowser()) {
-                if (screen.getBrowser().getIdentifier() == browserId) {
-                    return screen;
-                }
-            }
-        }
-
-        return null;
-    }
-
     public boolean hasActiveScreen() {
         for (Screen screen : screens.values()) {
-            if (screen.hasBrowser()) {
+            if (screen.hasPlayer()) {
                 return true;
             }
         }
@@ -58,7 +45,7 @@ public class ScreenManager {
 
     public void unloadAll() {
         for (Screen screen : screens.values()) {
-            screen.closeBrowser();
+            screen.release();
             screen.unregister();
         }
 

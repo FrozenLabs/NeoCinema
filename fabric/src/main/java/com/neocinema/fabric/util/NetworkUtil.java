@@ -1,14 +1,13 @@
 package com.neocinema.fabric.util;
 
 import com.neocinema.fabric.NeoCinemaClient;
-import com.neocinema.fabric.buffer.IdCodec;
+import com.neocinema.fabric.network.codec.IdCodec;
 import com.neocinema.fabric.gui.VideoQueueScreen;
-import com.neocinema.fabric.payload.inbound.*;
-import com.neocinema.fabric.payload.outbound.*;
-import com.neocinema.fabric.screen.PreviewScreen;
-import com.neocinema.fabric.screen.PreviewScreenManager;
+import com.neocinema.fabric.network.payload.inbound.*;
+import com.neocinema.fabric.network.payload.outbound.*;
+import com.neocinema.fabric.screen.preview.PreviewScreen;
+import com.neocinema.fabric.screen.preview.PreviewScreenManager;
 import com.neocinema.fabric.screen.Screen;
-import com.neocinema.fabric.service.VideoService;
 import com.neocinema.fabric.video.Video;
 import com.neocinema.fabric.video.VideoInfo;
 import com.neocinema.fabric.video.list.VideoList;
@@ -22,11 +21,6 @@ public final class NetworkUtil {
     private static final NeoCinemaClient CD = NeoCinemaClient.getInstance();
 
     public static void registerReceivers() {
-        registerInbound(ChannelServicesPayload.CHANNEL_SERVICES, ((payload, context) -> {
-            for (VideoService element : payload.service()) {
-                CD.getVideoServiceManager().register(element);
-            }
-        }));
         registerInbound(ChannelScreensPayload.CHANNEL_SCREENS, (payload, context) -> {
             for (Screen element : payload.screens()) {
                 CD.getScreenManager().registerScreen(element);
@@ -42,7 +36,7 @@ public final class NetworkUtil {
         registerInbound(UnloadScreenPayload.UNLOAD_SCREEN, ((payload, context) -> {
             Screen screen = CD.getScreenManager().getScreen(new BlockPos(payload.getX(), payload.getY(), payload.getZ()));
             if (screen == null) return;
-            context.client().submit(screen::closeBrowser);
+            context.client().submit(screen::release);
         }));
         registerInbound(UpdatePreviewScreenPayload.CHANNEL_UPDATE_PREVIEW_SCREEN, ((payload, context) -> {
             PreviewScreen previewScreen = payload.screen();
@@ -65,8 +59,7 @@ public final class NetworkUtil {
         registerInbound(ChannelVideoQueueStatePayload.CHANNEL_VIDEO_QUEUE_STATE, ((payload, context) -> {
             CD.getVideoQueue().setVideos(payload.queue());
             context.client().submit(() -> {
-                if (context.client().currentScreen instanceof VideoQueueScreen) {
-                    VideoQueueScreen videoQueueScreen = (VideoQueueScreen) context.client().currentScreen;
+                if (context.client().currentScreen instanceof VideoQueueScreen videoQueueScreen) {
                     videoQueueScreen.videoQueueWidget.update();
                 }
             });
@@ -77,9 +70,6 @@ public final class NetworkUtil {
         registerOutbound(ChannelVideoQueueVotePayload.CHANNEL_VIDEO_QUEUE_VOTE);
         registerOutbound(ChannelVideoQueueRemovePayload.CHANNEL_VIDEO_QUEUE_REMOVE);
         registerOutbound(ChannelShowVideoTimelinePayload.CHANNEL_SHOW_VIDEO_TIMELINE);
-//        ClientPlayNetworking.registerGlobalReceiver(CHANNEL_VIDEO_LIST_PLAYLIST_SPLIT, (client, handler, buf, responseSender) -> {
-//
-//        });
     }
 
     private static <T extends CustomPayload> void registerOutbound(IdCodec<T> codec) {

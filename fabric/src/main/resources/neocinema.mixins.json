@@ -6,11 +6,9 @@
   "mixins": [
   ],
   "client": [
-    "cef.MixinCefInit",
-    "client.render.MixinGameRenderer",
-    "client.MixinMinecraftClient",
-    "client.hud.MixinInGameHud",
-    "client.network.MixinClientPlayerEntity"
+    "MixinMinecraftClient",
+    "hud.MixinInGameHud",
+    "network.MixinClientPlayerEntity"
   ],
   "injectors": {
     "defaultRequire": 1

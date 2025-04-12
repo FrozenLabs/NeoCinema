@@ -111,7 +111,7 @@ public abstract class VideoListWidgetEntry extends ElementListWidget.Entry<Video
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         if (requestButtonSelected) {
             NetworkUtil.sendVideoRequestPacket(video.getVideoInfo());
-            client.setScreen(null); // close screen
+            client.setScreen(null); // release screen
         } else if (trashButtonSelected) {
             trashButtonAction(video);
             parent.videoList.remove(video.getVideoInfo());

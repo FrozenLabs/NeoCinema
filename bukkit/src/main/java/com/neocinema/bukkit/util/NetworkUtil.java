@@ -3,7 +3,6 @@ package com.neocinema.bukkit.util;
 import com.neocinema.bukkit.NeoCinemaPlugin;
 import com.neocinema.bukkit.buffer.PacketByteBufReimpl;
 import com.neocinema.bukkit.player.PlayerData;
-import com.neocinema.bukkit.service.VideoServiceType;
 import com.neocinema.bukkit.theater.StaticTheater;
 import com.neocinema.bukkit.theater.Theater;
 import com.neocinema.bukkit.theater.screen.PreviewScreen;
@@ -25,7 +24,6 @@ import java.util.List;
 public final class NetworkUtil {
 
     /* OUTGOING */
-    private static final String CHANNEL_SERVICES = "neocinema:services";
     private static final String CHANNEL_SCREENS = "neocinema:screens";
     private static final String CHANNEL_LOAD_SCREEN = "neocinema:load_screen";
     private static final String CHANNEL_UNLOAD_SCREEN = "neocinema:unload_screen";
@@ -44,7 +42,6 @@ public final class NetworkUtil {
     public static void registerChannels(NeoCinemaPlugin neoCinemaPlugin) {
         Messenger m = neoCinemaPlugin.getServer().getMessenger();
         /* OUTGOING */
-        m.registerOutgoingPluginChannel(neoCinemaPlugin, CHANNEL_SERVICES);
         m.registerOutgoingPluginChannel(neoCinemaPlugin, CHANNEL_SCREENS);
         m.registerOutgoingPluginChannel(neoCinemaPlugin, CHANNEL_LOAD_SCREEN);
         m.registerOutgoingPluginChannel(neoCinemaPlugin, CHANNEL_UNLOAD_SCREEN);
@@ -115,14 +112,6 @@ public final class NetworkUtil {
             if (theater == null || theater instanceof StaticTheater) return;
             theater.showBossBars(neoCinemaPlugin, player);
         });
-    }
-
-    public static void sendRegisterServicesPacket(JavaPlugin plugin, Player player) {
-        PacketByteBufReimpl buf = new PacketByteBufReimpl(Unpooled.buffer());
-        buf.writeInt(VideoServiceType.values().length);
-        for (VideoServiceType type : VideoServiceType.values())
-            type.toBytes(buf);
-        player.sendPluginMessage(plugin, CHANNEL_SERVICES, buf.array());
     }
 
     public static void sendScreensPacket(JavaPlugin plugin, Player player, List<Screen> screens) {

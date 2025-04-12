@@ -1,0 +1,29 @@
+package com.neocinema.fabric.mixins;
+
+import com.neocinema.fabric.NeoCinemaClient;
+import com.neocinema.fabric.util.WindowFocusMuteHandler;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.screen.Screen;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+@Mixin(MinecraftClient.class)
+public class MixinMinecraftClient {
+    @Inject(at = @At("HEAD"), method = "disconnect(Lnet/minecraft/client/gui/screen/Screen;Z)V")
+    private void disconnect(Screen disconnectionScreen, boolean transferring, CallbackInfo ci) {
+        NeoCinemaClient.getInstance().getScreenManager().unloadAll();
+        NeoCinemaClient.getInstance().getPreviewScreenManager().unloadAll();
+        NeoCinemaClient.getInstance().getVideoListManager().reset();
+        NeoCinemaClient.getInstance().getVideoQueue().clear();
+    }
+
+    @Inject(method = "onWindowFocusChanged", at = @At("RETURN"))
+    public void onWindowFocusChanged(boolean focused, CallbackInfo ci) {
+        if (!NeoCinemaClient.getInstance().getSettings().audio.muteWhenOutOfFocus) return;
+
+        if (focused) WindowFocusMuteHandler.gainFocus();
+        else WindowFocusMuteHandler.loseFocus();
+    }
+}
