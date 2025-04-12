@@ -1,15 +1,13 @@
 package com.neocinema.fabric.video.playback;
 
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL15;
-import org.lwjgl.opengl.GL21;
+import org.lwjgl.opengl.*;
 import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
 import uk.co.caprica.vlcj.player.base.MediaPlayer;
 import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
 import uk.co.caprica.vlcj.player.embedded.videosurface.CallbackVideoSurface;
 import uk.co.caprica.vlcj.player.embedded.videosurface.callback.BufferFormat;
 import uk.co.caprica.vlcj.player.embedded.videosurface.callback.BufferFormatCallbackAdapter;
-import uk.co.caprica.vlcj.player.embedded.videosurface.callback.RenderCallbackAdapter;
+import uk.co.caprica.vlcj.player.embedded.videosurface.callback.RenderCallback;
 import uk.co.caprica.vlcj.player.embedded.videosurface.callback.format.StandardBufferFormat;
 
 import java.nio.ByteBuffer;
@@ -18,19 +16,18 @@ import static com.neocinema.fabric.util.TextureUtil.emptyTexture;
 import static com.neocinema.fabric.util.TextureUtil.resetTextureUploadState;
 import static org.lwjgl.opengl.GL11.*;
 
-public class VideoLanPlayback {
+public final class VideoLanPlayback {
     private final MediaPlayerFactory mediaPlayerFactory;
     private final EmbeddedMediaPlayer mediaPlayer;
 
     private final int videoWidth = 1920;
     private final int videoHeight = 1090;
+    private final int bufferSize = videoWidth * videoHeight * 4;
 
-    private final int[] buffer = new int[videoWidth * videoHeight];
     private final int[] pboIds = new int[2];
-    private final int[] stagingBuffer = new int[videoWidth * videoHeight];
+    private final ByteBuffer stagingBuffer = ByteBuffer.allocateDirect(bufferSize);
     private int activePboIndex = 0;
     private boolean frameAvailable = false;
-
     private boolean hasPlayed = false;
 
     private final int textureIdVideo;
@@ -40,28 +37,28 @@ public class VideoLanPlayback {
                 "--no-video-title-show",
                 ":avcodec-hw=dxva2",
                 ":avcodec-codec=h264",
-                "--directx-hw-yuv",
-                "--codec=avcodec",
-                "--vout=none",
-                "--verbose=3"
+                "--codec=avcodec"
         );
         mediaPlayer = mediaPlayerFactory.mediaPlayers().newEmbeddedMediaPlayer();
 
         GL15.glGenBuffers(pboIds);
         for (int pboId : pboIds) {
             GL15.glBindBuffer(GL21.GL_PIXEL_UNPACK_BUFFER, pboId);
-            GL15.glBufferData(GL21.GL_PIXEL_UNPACK_BUFFER, videoWidth * videoHeight * 4L,
-                    GL15.GL_STREAM_DRAW);
+            GL15.glBufferData(GL21.GL_PIXEL_UNPACK_BUFFER, bufferSize, GL15.GL_STREAM_DRAW);
         }
         GL15.glBindBuffer(GL21.GL_PIXEL_UNPACK_BUFFER, 0);
 
         mediaPlayer.videoSurface().set(new CallbackVideoSurface(
-                new CubeBufferFormatCallback(),
-                new CubeRenderFormatCallback(buffer),
+                new DirectBufferFormatCallback(),
+                new DirectRenderCallback(),
                 true
         ));
 
         textureIdVideo = emptyTexture(videoWidth, videoHeight);
+        glBindTexture(GL_TEXTURE_2D, textureIdVideo);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glBindTexture(GL_TEXTURE_2D, 0);
     }
 
     public void play(String media, String... options) {
@@ -73,31 +70,45 @@ public class VideoLanPlayback {
         if (!hasPlayed || !frameAvailable) return;
 
         synchronized (this) {
-            // copy data from staging buffer to PBO
-            int pboIndex = activePboIndex;
+            final int pboIndex = activePboIndex;
             activePboIndex = (activePboIndex + 1) % pboIds.length;
 
             GL15.glBindBuffer(GL21.GL_PIXEL_UNPACK_BUFFER, pboIds[pboIndex]);
-            ByteBuffer pboBuffer = GL15.glMapBuffer(GL21.GL_PIXEL_UNPACK_BUFFER,
-                    GL15.GL_WRITE_ONLY, null);
+
+            ByteBuffer pboBuffer = GL30.glMapBufferRange(
+                    GL21.GL_PIXEL_UNPACK_BUFFER,
+                    0,
+                    bufferSize,
+                    GL30.GL_MAP_WRITE_BIT | GL30.GL_MAP_INVALIDATE_BUFFER_BIT,
+                    null
+            );
 
             if (pboBuffer != null) {
-                pboBuffer.asIntBuffer().put(stagingBuffer);
+                stagingBuffer.rewind();
+                pboBuffer.put(stagingBuffer);
                 GL15.glUnmapBuffer(GL21.GL_PIXEL_UNPACK_BUFFER);
             }
 
-            // upload texture data
             resetTextureUploadState();
             glBindTexture(GL_TEXTURE_2D, textureIdVideo);
-            GL11.glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, videoWidth, videoHeight,
-                    GL_RGBA, GL_UNSIGNED_BYTE, 0);
+            GL11.glTexSubImage2D(
+                    GL_TEXTURE_2D,
+                    0,
+                    0,
+                    0,
+                    videoWidth,
+                    videoHeight,
+                    GL11.GL_RGBA,
+                    GL11.GL_UNSIGNED_BYTE,
+                    0
+            );
 
             GL15.glBindBuffer(GL21.GL_PIXEL_UNPACK_BUFFER, 0);
             frameAvailable = false;
         }
     }
 
-    public void close() {
+    public void release() {
         if (mediaPlayer != null) {
             mediaPlayer.controls().stop();
             mediaPlayer.release();
@@ -105,7 +116,6 @@ public class VideoLanPlayback {
         if (mediaPlayerFactory != null) {
             mediaPlayerFactory.release();
         }
-
         GL15.glDeleteBuffers(pboIds);
         GL11.glDeleteTextures(textureIdVideo);
     }
@@ -118,24 +128,29 @@ public class VideoLanPlayback {
         return mediaPlayer;
     }
 
-    private static class CubeBufferFormatCallback extends BufferFormatCallbackAdapter {
+    private static final class DirectBufferFormatCallback extends BufferFormatCallbackAdapter {
         @Override
         public BufferFormat getBufferFormat(int sourceWidth, int sourceHeight) {
             return new StandardBufferFormat(sourceWidth, sourceHeight);
         }
     }
 
-    private class CubeRenderFormatCallback extends RenderCallbackAdapter {
-        public CubeRenderFormatCallback(int[] videoBuffer) {
-            setBuffer(videoBuffer);
-        }
+    private final class DirectRenderCallback implements RenderCallback {
+        @Override
+        public void lock(MediaPlayer mediaPlayer) {}
 
         @Override
-        protected void onDisplay(MediaPlayer mediaPlayer, int[] buffer) {
+        public void unlock(MediaPlayer mediaPlayer) {}
+
+        @Override
+        public void display(MediaPlayer mediaPlayer, ByteBuffer[] nativeBuffers, BufferFormat bufferFormat, int displayHeight, int displayWidth) {
             if (!mediaPlayer.status().isPlaying()) return;
 
+            ByteBuffer nativeBuffer = nativeBuffers[0];
             synchronized (VideoLanPlayback.this) {
-                System.arraycopy(buffer, 0, stagingBuffer, 0, buffer.length);
+                nativeBuffer.rewind();
+                stagingBuffer.rewind();
+                stagingBuffer.put(nativeBuffer);
                 frameAvailable = true;
             }
         }

@@ -9,14 +9,18 @@ import net.minecraft.block.Blocks;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.math.BlockPos;
+import uk.co.caprica.vlcj.media.Media;
+import uk.co.caprica.vlcj.media.MediaEventAdapter;
 import uk.co.caprica.vlcj.media.MediaSlaveType;
+import uk.co.caprica.vlcj.media.Meta;
+import uk.co.caprica.vlcj.player.base.MediaPlayer;
+import uk.co.caprica.vlcj.player.base.MediaPlayerEventAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings("unused")
 public class Screen {
-
     private int x;
     private int y;
     private int z;
@@ -112,14 +116,14 @@ public class Screen {
 
     public void loadVideo(Video video) {
         this.video = video;
-        closeBrowser();
+        release();
         player = new VideoLanPlayback();
         startVideo();
     }
 
-    public void closeBrowser() {
+    public void release() {
         if (player != null) {
-            player.close();
+            player.release();
             player = null;
         }
     }
@@ -139,8 +143,14 @@ public class Screen {
 
         long resumeTimeMs = System.currentTimeMillis() - video.getStartedAt();
         String mediaUrl = video.getVideoInfo().getId();
-        player.mediaPlayer().media().addSlave(MediaSlaveType.SUBTITLE, video.getVideoInfo().getId().replace("mp4", "srt"), true);
         player.play(mediaUrl);
+        player.mediaPlayer().events().addMediaPlayerEventListener(new MediaPlayerEventAdapter() {
+            @Override
+            public void playing(MediaPlayer mediaPlayer) {
+                mediaPlayer.controls().setTime(resumeTimeMs);
+                mediaPlayer.events().removeMediaPlayerEventListener(this);
+            }
+        });
     }
 
 

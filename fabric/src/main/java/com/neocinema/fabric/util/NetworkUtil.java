@@ -36,7 +36,7 @@ public final class NetworkUtil {
         registerInbound(UnloadScreenPayload.UNLOAD_SCREEN, ((payload, context) -> {
             Screen screen = CD.getScreenManager().getScreen(new BlockPos(payload.getX(), payload.getY(), payload.getZ()));
             if (screen == null) return;
-            context.client().submit(screen::closeBrowser);
+            context.client().submit(screen::release);
         }));
         registerInbound(UpdatePreviewScreenPayload.CHANNEL_UPDATE_PREVIEW_SCREEN, ((payload, context) -> {
             PreviewScreen previewScreen = payload.screen();

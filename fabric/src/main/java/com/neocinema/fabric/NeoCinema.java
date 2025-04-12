@@ -12,6 +12,6 @@ public class NeoCinema implements ModInitializer {
 
     @Override
     public void onInitialize() {
-        System.out.println(new NativeDiscovery().discover());
+        new NativeDiscovery().discover();
     }
 }

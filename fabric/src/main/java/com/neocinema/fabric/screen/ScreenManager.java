@@ -21,7 +21,7 @@ public class ScreenManager {
         if (screens.containsKey(screen.getPos())) {
             Screen old = screens.get(screen.getPos());
             old.unregister();
-            old.closeBrowser();
+            old.release();
         }
 
         screen.register();
@@ -45,7 +45,7 @@ public class ScreenManager {
 
     public void unloadAll() {
         for (Screen screen : screens.values()) {
-            screen.closeBrowser();
+            screen.release();
             screen.unregister();
         }
 
