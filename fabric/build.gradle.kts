@@ -1,8 +1,4 @@
-import net.fabricmc.loom.task.RemapJarTask
-import org.apache.tools.ant.taskdefs.condition.Os
-import de.undercouch.gradle.tasks.download.Download
 import org.gradle.kotlin.dsl.java
-import java.net.URL
 
 plugins {
 	java
@@ -64,18 +60,6 @@ tasks.jar {
 	from("LICENSE") {
 		rename { "${it}_${base.archivesName.get()}" }
 	}
-}
-
-sourceSets {
-//	val jcef by creating {
-//		java.srcDir("java-cef/java")
-//		java.exclude("**/tests/**")
-//	}
-//
-//	named("main") {
-//		compileClasspath += jcef.output
-//		runtimeClasspath += jcef.output
-//	}
 }
 
 publishing {
