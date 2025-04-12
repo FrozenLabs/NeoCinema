@@ -21,7 +21,7 @@ jobs:
           java-version: "21"
 
       - name: Build Everything
-        run: ./gradlew :bukkit:build :fabric:build shadowJar
+        run: ./gradlew :bukkit:build :fabric:build remapJar
 
       - name: Upload Bukkit JAR
         uses: actions/upload-artifact@v4.3.0
@@ -33,4 +33,4 @@ jobs:
         uses: actions/upload-artifact@v4.3.0
         with:
           name: neocinema-dev-universal
-          path: fabric/build/libs/*universal.jar
+          path: fabric/build/libs/*dev-universal.jar

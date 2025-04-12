@@ -1,5 +1,6 @@
 import org.gradle.kotlin.dsl.java
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import net.fabricmc.loom.task.RemapJarTask
 
 plugins {
 	java
@@ -51,6 +52,13 @@ tasks.shadowJar {
 	archiveClassifier.set("universal")
 	configurations = listOf(shadowOnly)
 	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
+tasks.remapJar {
+	dependsOn(tasks.shadowJar)
+	mustRunAfter(tasks.shadowJar)
+	inputFile = tasks.shadowJar.get().archiveFile
+	archiveFileName.set("neocinema-${version}-dev-universal.jar")
 }
 
 tasks.withType<JavaCompile>().configureEach {
