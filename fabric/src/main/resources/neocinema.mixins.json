@@ -6,9 +6,9 @@
   "mixins": [
   ],
   "client": [
-    "client.MixinMinecraftClient",
-    "client.hud.MixinInGameHud",
-    "client.network.MixinClientPlayerEntity"
+    "MixinMinecraftClient",
+    "hud.MixinInGameHud",
+    "network.MixinClientPlayerEntity"
   ],
   "injectors": {
     "defaultRequire": 1

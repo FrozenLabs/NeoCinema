@@ -9,16 +9,13 @@ import com.neocinema.fabric.block.screen.ScreenBlockEntityRenderer;
 import com.neocinema.fabric.gui.VideoQueueScreen;
 import com.neocinema.fabric.screen.preview.PreviewScreenManager;
 import com.neocinema.fabric.screen.ScreenManager;
-import com.neocinema.fabric.settings.VideoSettings;
+import com.neocinema.fabric.settings.NeoCinemaSettings;
 import com.neocinema.fabric.util.NetworkUtil;
 import com.neocinema.fabric.video.list.VideoListManager;
 import com.neocinema.fabric.video.queue.VideoQueue;
 import net.fabricmc.api.ClientModInitializer;
 
-import java.io.IOException;
-
 public class NeoCinemaClient implements ClientModInitializer {
-
     private static NeoCinemaClient instance;
 
     public static NeoCinemaClient getInstance() {
@@ -27,7 +24,7 @@ public class NeoCinemaClient implements ClientModInitializer {
 
     private ScreenManager screenManager;
     private PreviewScreenManager previewScreenManager;
-    private VideoSettings videoSettings;
+    private NeoCinemaSettings settings;
     private VideoListManager videoListManager;
     private VideoQueue videoQueue;
 
@@ -39,8 +36,8 @@ public class NeoCinemaClient implements ClientModInitializer {
         return previewScreenManager;
     }
 
-    public VideoSettings getVideoSettings() {
-        return videoSettings;
+    public NeoCinemaSettings getSettings() {
+        return settings;
     }
 
     public VideoListManager getVideoListManager() {
@@ -69,15 +66,10 @@ public class NeoCinemaClient implements ClientModInitializer {
 
         screenManager = new ScreenManager();
         previewScreenManager = new PreviewScreenManager();
-        videoSettings = new VideoSettings();
         videoListManager = new VideoListManager();
         videoQueue = new VideoQueue();
 
-        try {
-            videoSettings.load();
-        } catch (IOException e) {
-            NeoCinema.LOGGER.error("Could not load video settings!", e);
-        }
+        settings = NeoCinemaSettings.load();
 
         VideoQueueScreen.registerKeyInput();
     }

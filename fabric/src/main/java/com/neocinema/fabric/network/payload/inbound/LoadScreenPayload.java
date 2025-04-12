@@ -1,22 +1,23 @@
-package com.neocinema.fabric.payload.inbound;
+package com.neocinema.fabric.network.payload.inbound;
 
 import com.neocinema.fabric.NeoCinema;
-import com.neocinema.fabric.codec.IdCodec;
+import com.neocinema.fabric.network.codec.IdCodec;
+import com.neocinema.fabric.video.Video;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.util.Identifier;
 import org.apache.commons.lang3.NotImplementedException;
 
-public class UnloadScreenPayload implements CustomPayload {
-    public static final IdCodec<UnloadScreenPayload> UNLOAD_SCREEN = new IdCodec<>(
-            new Id<>(Identifier.of(NeoCinema.MODID, "unload_screen")),
+public class LoadScreenPayload implements CustomPayload {
+    public static final IdCodec<LoadScreenPayload> LOAD_SCREEN = new IdCodec<>(
+            new Id<>(Identifier.of(NeoCinema.MODID, "load_screen")),
             PacketCodec.ofStatic(
                     (b, p) -> {
                         throw new NotImplementedException();
                     },
                     b -> {
-                        var payload = new UnloadScreenPayload().fromBytes(b);
+                        var payload = new LoadScreenPayload().fromBytes(b);
                         b.clear();
                         return payload;
                     }
@@ -26,6 +27,8 @@ public class UnloadScreenPayload implements CustomPayload {
     private int x;
     private int y;
     private int z;
+
+    private Video video;
 
     public int getX() {
         return x;
@@ -39,15 +42,20 @@ public class UnloadScreenPayload implements CustomPayload {
         return z;
     }
 
-    @Override
-    public Id<? extends CustomPayload> getId() {
-        return UNLOAD_SCREEN.id();
+    public Video getVideo() {
+        return video;
     }
 
-    public UnloadScreenPayload fromBytes(PacketByteBuf buf) {
+    @Override
+    public Id<? extends CustomPayload> getId() {
+        return LOAD_SCREEN.id();
+    }
+
+    public LoadScreenPayload fromBytes(PacketByteBuf buf) {
         x = buf.readInt();
         y = buf.readInt();
         z = buf.readInt();
+        video = new Video().fromBytes(buf);
         return this;
     }
 }

@@ -1,10 +1,10 @@
 package com.neocinema.fabric.util;
 
 import com.neocinema.fabric.NeoCinemaClient;
-import com.neocinema.fabric.codec.IdCodec;
+import com.neocinema.fabric.network.codec.IdCodec;
 import com.neocinema.fabric.gui.VideoQueueScreen;
-import com.neocinema.fabric.payload.inbound.*;
-import com.neocinema.fabric.payload.outbound.*;
+import com.neocinema.fabric.network.payload.inbound.*;
+import com.neocinema.fabric.network.payload.outbound.*;
 import com.neocinema.fabric.screen.preview.PreviewScreen;
 import com.neocinema.fabric.screen.preview.PreviewScreenManager;
 import com.neocinema.fabric.screen.Screen;

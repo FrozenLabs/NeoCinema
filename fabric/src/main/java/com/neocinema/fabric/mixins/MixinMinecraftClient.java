@@ -1,4 +1,4 @@
-package com.neocinema.fabric.mixins.client;
+package com.neocinema.fabric.mixins;
 
 import com.neocinema.fabric.NeoCinemaClient;
 import com.neocinema.fabric.util.WindowFocusMuteHandler;
@@ -21,6 +21,8 @@ public class MixinMinecraftClient {
 
     @Inject(method = "onWindowFocusChanged", at = @At("RETURN"))
     public void onWindowFocusChanged(boolean focused, CallbackInfo ci) {
+        if (!NeoCinemaClient.getInstance().getSettings().audio.muteWhenOutOfFocus) return;
+
         if (focused) WindowFocusMuteHandler.gainFocus();
         else WindowFocusMuteHandler.loseFocus();
     }

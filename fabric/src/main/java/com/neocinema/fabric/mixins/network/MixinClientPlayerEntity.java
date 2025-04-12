@@ -1,4 +1,4 @@
-package com.neocinema.fabric.mixins.client.network;
+package com.neocinema.fabric.mixins.network;
 
 import com.neocinema.fabric.NeoCinemaClient;
 import net.minecraft.client.network.ClientPlayerEntity;

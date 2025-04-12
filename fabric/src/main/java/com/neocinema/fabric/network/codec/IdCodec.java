@@ -1,4 +1,4 @@
-package com.neocinema.fabric.codec;
+package com.neocinema.fabric.network.codec;
 
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.codec.PacketCodec;

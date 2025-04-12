@@ -17,7 +17,7 @@ public class WindowFocusMuteHandler {
 
     public static void gainFocus() {
         try {
-            float volume = NeoCinemaClient.getInstance().getVideoSettings().getVolume();
+            float volume = NeoCinemaClient.getInstance().getSettings().audio.volume;
             for (Screen screen : NeoCinemaClient.getInstance().getScreenManager().getScreens()) {
                 screen.setVideoVolume(volume);
             }

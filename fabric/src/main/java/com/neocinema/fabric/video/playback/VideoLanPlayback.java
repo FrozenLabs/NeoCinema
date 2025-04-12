@@ -192,9 +192,13 @@ public final class VideoLanPlayback {
                 }
 
                 stagingBuffer.rewind();
-                for (int i = 0; i < bufferSize; i++) {
-                    stagingBuffer.put((byte) 0x000000FF);
+                for (int i = 0; i < bufferSize; i += 4) {
+                    stagingBuffer.put((byte) 0);     // R
+                    stagingBuffer.put((byte) 0);     // G
+                    stagingBuffer.put((byte) 0);     // B
+                    stagingBuffer.put((byte) 0xFF);  // A (opaque)
                 }
+
                 stagingBuffer.rewind();
 
                 int targetX = Math.max(0, (targetWidth - sourceWidth) / 2);

@@ -1,4 +1,4 @@
-package com.neocinema.fabric.mixins.client.hud;
+package com.neocinema.fabric.mixins.hud;
 
 import com.neocinema.fabric.NeoCinemaClient;
 import net.minecraft.client.gui.DrawContext;
@@ -14,7 +14,7 @@ public class MixinInGameHud {
     @Inject(method = "renderCrosshair", at = @At("HEAD"), cancellable = true)
     public void renderCrosshair(DrawContext context, RenderTickCounter tickCounter, CallbackInfo ci) {
         if (NeoCinemaClient.getInstance().getScreenManager().hasActiveScreen()
-                && NeoCinemaClient.getInstance().getVideoSettings().isHideCrosshair()) {
+                && NeoCinemaClient.getInstance().getSettings().video.hideCrosshair) {
             ci.cancel();
         }
     }
