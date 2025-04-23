@@ -1,5 +1,6 @@
 package com.neocinema.fabric.screen;
 
+import com.neocinema.fabric.video.playback.VideoLanPlayback;
 import net.minecraft.util.math.BlockPos;
 
 import java.util.Collection;
@@ -15,6 +16,16 @@ public class ScreenManager {
 
     public Collection<Screen> getScreens() {
         return screens.values();
+    }
+
+    public Screen getCurrentScreen() {
+        for (Screen screen : screens.values()) {
+            if (screen.hasPlayer()) {
+                return screen;
+            }
+        }
+
+        return null;
     }
 
     public void registerScreen(Screen screen) {
