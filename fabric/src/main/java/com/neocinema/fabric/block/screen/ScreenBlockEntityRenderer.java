@@ -1,5 +1,6 @@
 package com.neocinema.fabric.block.screen;
 
+import com.mojang.blaze3d.opengl.GlStateManager;
 import com.neocinema.fabric.NeoCinemaClient;
 import com.neocinema.fabric.screen.Screen;
 import com.neocinema.fabric.screen.ScreenManager;
@@ -11,6 +12,7 @@ import net.minecraft.client.render.block.entity.BlockEntityRenderer;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactories;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.util.math.Vec3d;
 
 public class ScreenBlockEntityRenderer implements BlockEntityRenderer<ScreenBlockEntity> {
 
@@ -18,15 +20,15 @@ public class ScreenBlockEntityRenderer implements BlockEntityRenderer<ScreenBloc
     }
 
     @Override
-    public void render(ScreenBlockEntity entity, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
+    public void render(ScreenBlockEntity entity, float tickProgress, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay, Vec3d cameraPos) {
         ScreenManager screenManager = NeoCinemaClient.getInstance().getScreenManager();
         Screen screen = screenManager.getScreen(entity.getPos());
         if (screen == null || !screen.isVisible()) return;
 
-        RenderSystem.enableDepthTest();
+        GlStateManager._enableDepthTest();
         Tessellator tessellator = Tessellator.getInstance();
         renderScreenTexture(screen, matrices, tessellator);
-        RenderSystem.disableDepthTest();
+        GlStateManager._disableDepthTest();
     }
 
     private static void renderScreenTexture(Screen screen, MatrixStack matrices, Tessellator tessellator) {
@@ -37,8 +39,7 @@ public class ScreenBlockEntityRenderer implements BlockEntityRenderer<ScreenBloc
         matrices.scale(screen.getWidth(), screen.getHeight(), 0);
         if (screen.hasPlayer()) {
             screen.getPlayer().sync();
-            int glId = screen.getPlayer().texture();
-            RenderUtil.renderTexture(matrices, tessellator, glId);
+            RenderUtil.renderTexture(matrices, tessellator, screen.getPlayer().texture());
         } else {
             RenderUtil.renderBlack(matrices, tessellator);
         }

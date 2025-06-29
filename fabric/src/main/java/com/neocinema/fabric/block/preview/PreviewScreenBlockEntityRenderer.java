@@ -1,7 +1,9 @@
 package com.neocinema.fabric.block.preview;
 
+import com.mojang.blaze3d.opengl.GlStateManager;
 import com.neocinema.fabric.util.RenderUtil;
 import net.minecraft.client.render.LightmapTextureManager;
+import net.minecraft.util.math.Vec3d;
 import org.joml.Quaternionf;
 
 import com.neocinema.fabric.NeoCinemaClient;
@@ -25,16 +27,16 @@ public class PreviewScreenBlockEntityRenderer implements BlockEntityRenderer<Pre
     }
 
     @Override
-    public void render(PreviewScreenBlockEntity entity, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
+    public void render(PreviewScreenBlockEntity entity, float tickProgress, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay, Vec3d cameraPos) {
         PreviewScreenManager previewScreenManager = NeoCinemaClient.getInstance().getPreviewScreenManager();
         PreviewScreen previewScreen = previewScreenManager.getPreviewScreen(entity.getPos());
         if (previewScreen == null) return;
-        RenderSystem.enableDepthTest();
+        GlStateManager._enableDepthTest();
         Tessellator tessellator = Tessellator.getInstance();
         renderScreenTexture(previewScreen, matrices, tessellator);
         renderVideoThumbnail(previewScreen, matrices, tessellator);
         renderScreenText(previewScreen, matrices, vertexConsumers);
-        RenderSystem.disableDepthTest();
+        GlStateManager._disableDepthTest();
     }
 
     private static void renderScreenTexture(PreviewScreen previewScreen, MatrixStack matrices, Tessellator tessellator) {
@@ -46,7 +48,7 @@ public class PreviewScreenBlockEntityRenderer implements BlockEntityRenderer<Pre
             RenderUtil.moveForward(matrices, previewScreen.getFacing(), 0.008f);
             RenderUtil.fixRotation(matrices, previewScreen.getFacing());
             matrices.scale(3, 2, 0);
-            RenderUtil.renderTexture(matrices, tessellator, texture.getGlId());
+            RenderUtil.renderTexture(matrices, tessellator, texture);
             matrices.pop();
         }
     }
@@ -62,7 +64,7 @@ public class PreviewScreenBlockEntityRenderer implements BlockEntityRenderer<Pre
             RenderUtil.moveForward(matrices, previewScreen.getFacing(), 0.01f);
             RenderUtil.fixRotation(matrices, previewScreen.getFacing());
             matrices.scale(3 / 1.5f, 2 / 1.5f, 0);
-            RenderUtil.renderTexture(matrices, tessellator, texture.getGlId());
+            RenderUtil.renderTexture(matrices, tessellator, texture);
             matrices.pop();
         }
     }

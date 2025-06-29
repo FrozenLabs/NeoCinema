@@ -23,8 +23,8 @@ repositories {
 }
 
 dependencies {
-    compileOnly("org.spigotmc:spigot-api:1.21.4-R0.1-SNAPSHOT")
-    compileOnly("org.spigotmc:spigot:1.21.4-R0.1-SNAPSHOT")
+    compileOnly("org.spigotmc:spigot-api:1.21.5-R0.1-SNAPSHOT")
+    compileOnly("org.spigotmc:spigot:1.21.5-R0.1-SNAPSHOT")
     compileOnly("io.netty:netty-all:4.1.115.Final")
     compileOnly("org.xerial:sqlite-jdbc:3.47.0.0")
     compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.13")
@@ -43,7 +43,7 @@ tasks {
     }
 
     runServer {
-        minecraftVersion("1.21.4")
+        minecraftVersion("1.21.5")
     }
 
     assemble {
